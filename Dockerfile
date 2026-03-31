@@ -7,6 +7,5 @@ RUN npm run build
 
 FROM nginx:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-RUN chmod -R 777 /var/cache/nginx /var/run /etc/nginx/conf.d
+COPY nginx.conf /etc/nginx/nginx.conf
 EXPOSE 80
