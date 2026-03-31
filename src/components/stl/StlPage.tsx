@@ -1,16 +1,42 @@
-import { useMemo } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { useAppStore } from "../../store";
 import { ConfigSummaryBanner } from "../shared/ConfigSummaryBanner";
 import { StlGroupSection } from "./StlGroupSection";
 import { computeStl } from "../../lib/stl-engine";
-import { Info } from "lucide-react";
+import { downloadStlZip } from "../../lib/stl-download";
+import { Info, Download, Loader2 } from "lucide-react";
 
 export function StlPage() {
   const config = useAppStore((s) => s.config);
   const wizardComplete = useAppStore((s) => s.wizardComplete);
   const stlTracking = useAppStore((s) => s.stlTracking);
+  const [downloading, setDownloading] = useState(false);
+  const [progress, setProgress] = useState({ done: 0, total: 0 });
 
   const groups = useMemo(() => computeStl(config), [config]);
+
+  const allFiles = useMemo(
+    () => groups.flatMap((g) => g.files),
+    [groups],
+  );
+
+  const handleDownload = useCallback(async () => {
+    setDownloading(true);
+    setProgress({ done: 0, total: allFiles.length });
+    try {
+      await downloadStlZip(allFiles, (done, total) => {
+        setProgress({ done, total });
+      });
+    } catch (err) {
+      alert(
+        err instanceof Error
+          ? err.message
+          : "Download failed",
+      );
+    } finally {
+      setDownloading(false);
+    }
+  }, [allFiles]);
 
   if (!wizardComplete) {
     return (
@@ -20,10 +46,7 @@ export function StlPage() {
     );
   }
 
-  const totalFiles = groups.reduce(
-    (sum, g) => sum + g.files.length,
-    0,
-  );
+  const totalFiles = allFiles.length;
   const printedFiles = groups.reduce(
     (sum, g) =>
       sum +
@@ -50,8 +73,27 @@ export function StlPage() {
         </div>
       </div>
 
-      <div className="mb-4 text-xs text-gray-500">
-        {printedFiles}/{totalFiles} files printed
+      <div className="mb-4 flex items-center justify-between">
+        <span className="text-xs text-gray-500">
+          {printedFiles}/{totalFiles} files printed
+        </span>
+        <button
+          onClick={handleDownload}
+          disabled={downloading}
+          className="inline-flex items-center gap-2 rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-500 disabled:opacity-60"
+        >
+          {downloading ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Downloading {progress.done}/{progress.total}...
+            </>
+          ) : (
+            <>
+              <Download className="h-4 w-4" />
+              Download All STL Files
+            </>
+          )}
+        </button>
       </div>
 
       <div className="space-y-3">

@@ -1,5 +1,14 @@
 import type { StlGroup } from "../types/stl";
 
+const REPO_BASE = "STL";
+const CORE = `${REPO_BASE}/OpenTrickler`;
+const SERVO = `${CORE}/ServoGate`;
+const VOLUME = `${CORE}/VolumeReducer`;
+const TOOLS = `${CORE}/Tools`;
+const HOPPER = `${REPO_BASE}/Powder Hopper`;
+const AD_FX = `${REPO_BASE}/A&D FX Shield`;
+const GG_JJ100B = `${REPO_BASE}/G&G JJ100B housing`;
+
 export const STL_GROUPS: StlGroup[] = [
   {
     id: "opentrickler_core",
@@ -10,6 +19,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "front_body",
         filename: "front_body.stl",
+        repoPath: `${CORE}/front_body.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: () => true,
@@ -17,6 +27,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "front_body_cover",
         filename: "front_body_cover.stl",
+        repoPath: `${CORE}/front_body_cover.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: () => true,
@@ -24,6 +35,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "rear_body",
         filename: "rear_body.stl",
+        repoPath: `${CORE}/rear_body.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: () => true,
@@ -31,6 +43,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "front_rear_door",
         filename: "front_rear_door_x2.stl",
+        repoPath: `${CORE}/front_rear_door_x2.stl`,
         printQuantity: 2,
         material: "abs_asa_petg",
         requiredWhen: () => true,
@@ -38,6 +51,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "large_rotary_tube",
         filename: "large_rotary_tube.stl",
+        repoPath: `${CORE}/large_rotary_tube.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: () => true,
@@ -45,6 +59,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "small_rotary_tube_low_flow",
         filename: "small_rotary_tube_low_flow.stl",
+        repoPath: `${CORE}/small_rotary_tube_low_flow.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) => config.flowRate === "low" || config.flowRate === null,
@@ -52,6 +67,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "small_rotary_tube_mid_flow",
         filename: "small_rotary_tube_mid_flow.stl",
+        repoPath: `${CORE}/small_rotary_tube_mid_flow.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) => config.flowRate === "mid",
@@ -59,6 +75,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "small_rotary_tube_high_flow",
         filename: "small_rotary_tube_high_flow.stl",
+        repoPath: `${CORE}/small_rotary_tube_high_flow.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) => config.flowRate === "high",
@@ -66,6 +83,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "gt2_40t_pulley",
         filename: "40_teeth_gt2_pulley_x2.stl",
+        repoPath: `${CORE}/40_teeth_gt2_pulley_x2.stl`,
         printQuantity: 2,
         material: "abs_asa_petg",
         specialInstructions: "Can use aftermarket metal pulleys instead.",
@@ -82,6 +100,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "left_servo_hanger",
         filename: "left_servo_hanger.stl",
+        repoPath: `${SERVO}/left_servo_hanger.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) => config.servoGate === true,
@@ -89,6 +108,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "right_servo_hanger",
         filename: "right_servo_hanger.stl",
+        repoPath: `${SERVO}/right_servo_hanger.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) => config.servoGate === true,
@@ -96,6 +116,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "left_shutter",
         filename: "left_shutter.stl",
+        repoPath: `${SERVO}/left_shutter.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) => config.servoGate === true,
@@ -103,6 +124,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "right_shutter",
         filename: "right_shutter.stl",
+        repoPath: `${SERVO}/right_shutter.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) => config.servoGate === true,
@@ -110,6 +132,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "spur_gear",
         filename: "spur_gear_x2.stl",
+        repoPath: `${SERVO}/spur_gear_x2.stl`,
         printQuantity: 2,
         material: "abs_asa_petg",
         requiredWhen: (config) => config.servoGate === true,
@@ -125,6 +148,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "front_volume_insert_top",
         filename: "FrontVolumeReductionInsert_Top.stl",
+        repoPath: `${VOLUME}/FrontVolumeReductionInsert_Top.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) => config.volumeReducer === true,
@@ -132,6 +156,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "front_volume_insert_bottom",
         filename: "FrontVolumeReductionInsert_Bottom.stl",
+        repoPath: `${VOLUME}/FrontVolumeReductionInsert_Bottom.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) => config.volumeReducer === true,
@@ -139,6 +164,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "rear_volume_insert_top",
         filename: "RearVolumeReductionInsert_Top.stl",
+        repoPath: `${VOLUME}/RearVolumeReductionInsert_Top.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) => config.volumeReducer === true,
@@ -146,6 +172,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "rear_volume_insert_bottom",
         filename: "RearVolumeReductionInsert_Bottom.stl",
+        repoPath: `${VOLUME}/RearVolumeReductionInsert_Bottom.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) => config.volumeReducer === true,
@@ -165,6 +192,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "ad_scale_shield",
         filename: "scale_shield.stl",
+        repoPath: `${AD_FX}/scale_shield.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
@@ -174,6 +202,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "ad_trickler_adapter_plate",
         filename: "trickler_adapter_plate.stl",
+        repoPath: `${AD_FX}/trickler_adapter_plate.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
@@ -183,6 +212,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "ad_scale_base_adapter_ring",
         filename: "scale_base_adapter_ring.stl",
+        repoPath: `${AD_FX}/scale_base_adapter_ring.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
@@ -192,6 +222,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "ad_scale_weighing_pan_adapter",
         filename: "scale_weighing_pan_adapter.stl",
+        repoPath: `${AD_FX}/scale_weighing_pan_adapter.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
@@ -201,6 +232,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "ad_weighing_pan_27mm",
         filename: "weighing_pan_27mm.stl",
+        repoPath: `${AD_FX}/weighing_pan_27mm.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
@@ -210,6 +242,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "ad_scale_pan_cover",
         filename: "scale_pan_cover.stl",
+        repoPath: `${AD_FX}/scale_pan_cover.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
@@ -219,6 +252,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "ad_pan_cover",
         filename: "pan_cover.stl",
+        repoPath: `${AD_FX}/pan_cover.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
@@ -228,6 +262,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "ad_pan_cover_lid",
         filename: "pan_cover_lid.stl",
+        repoPath: `${AD_FX}/pan_cover_lid.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
@@ -237,6 +272,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "ad_cup_base_7mm",
         filename: "cup_base_7mm.stl",
+        repoPath: `${AD_FX}/cup_base_7mm.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
@@ -246,6 +282,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "ad_powder_cup_body",
         filename: "powder_cup_body.stl",
+        repoPath: `${AD_FX}/powder_cup_body.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
@@ -255,6 +292,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "ad_powder_cup_handle",
         filename: "powder_cup_handle.stl",
+        repoPath: `${AD_FX}/powder_cup_handle.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
@@ -264,6 +302,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "ad_front_discharger_mount",
         filename: "front_discharger_mount.stl",
+        repoPath: `${AD_FX}/front_discharger_mount.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
@@ -273,6 +312,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "ad_rear_discharge_mount",
         filename: "rear_discharge_mount.stl",
+        repoPath: `${AD_FX}/rear_discharge_mount.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
@@ -282,6 +322,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "ad_rear_discharger_cup",
         filename: "rear_discharger_cup.stl",
+        repoPath: `${AD_FX}/rear_discharger_cup.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
@@ -291,6 +332,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "ad_rear_discharge_cup_ring",
         filename: "rear_discharge_cup_ring.stl",
+        repoPath: `${AD_FX}/rear_discharge_cup_ring.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
@@ -300,6 +342,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "ad_rear_discharger_sliding_door",
         filename: "rear_discharger_sliding_door.stl",
+        repoPath: `${AD_FX}/rear_discharger_sliding_door.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
@@ -318,6 +361,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "gg_baseplate",
         filename: "JJ100B_Baseplate_OpenTrickler.stl",
+        repoPath: `${GG_JJ100B}/JJ100B_Baseplate_OpenTrickler.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) => config.scaleType === "gg_jj100b",
@@ -325,6 +369,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "gg_body",
         filename: "JJ100B_Body.stl",
+        repoPath: `${GG_JJ100B}/JJ100B_Body.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) => config.scaleType === "gg_jj100b",
@@ -332,6 +377,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "gg_body_cover",
         filename: "JJ100B_Body-cover.stl",
+        repoPath: `${GG_JJ100B}/JJ100B_Body-cover.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) => config.scaleType === "gg_jj100b",
@@ -339,6 +385,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "gg_scale_plate",
         filename: "JJ100B_Scale-plate.stl",
+        repoPath: `${GG_JJ100B}/JJ100B_Scale-plate.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) => config.scaleType === "gg_jj100b",
@@ -346,6 +393,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "gg_ring",
         filename: "JJ100B_Ring.stl",
+        repoPath: `${GG_JJ100B}/JJ100B_Ring.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) => config.scaleType === "gg_jj100b",
@@ -353,6 +401,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "gg_cup",
         filename: "JJ100B_Cup.stl",
+        repoPath: `${GG_JJ100B}/JJ100B_Cup.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) => config.scaleType === "gg_jj100b",
@@ -360,6 +409,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "gg_discharger_cup",
         filename: "JJ100B_Discharger_cup.stl",
+        repoPath: `${GG_JJ100B}/JJ100B_Discharger_cup.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) => config.scaleType === "gg_jj100b",
@@ -367,6 +417,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "gg_discharger_cup_ring",
         filename: "JJ100B_Discharger_cup_ring.stl",
+        repoPath: `${GG_JJ100B}/JJ100B_Discharger_cup_ring.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) => config.scaleType === "gg_jj100b",
@@ -374,6 +425,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "gg_discharger_mount",
         filename: "JJ100B_Discharger_mount.stl",
+        repoPath: `${GG_JJ100B}/JJ100B_Discharger_mount.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) => config.scaleType === "gg_jj100b",
@@ -381,6 +433,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "gg_front_discharger_mount",
         filename: "JJ100B_Front_discharger_mount.stl",
+        repoPath: `${GG_JJ100B}/JJ100B_Front_discharger_mount.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) => config.scaleType === "gg_jj100b",
@@ -388,6 +441,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "gg_discharger_sliding_door",
         filename: "JJ100B_Discharger_sliding_door.stl",
+        repoPath: `${GG_JJ100B}/JJ100B_Discharger_sliding_door.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) => config.scaleType === "gg_jj100b",
@@ -404,6 +458,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "hopper_base",
         filename: "hopper_base.stl",
+        repoPath: `${HOPPER}/hopper_base.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: () => true,
@@ -411,6 +466,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "hopper_body_100mm",
         filename: "hopper_body_100mm.stl",
+        repoPath: `${HOPPER}/hopper_body_100mm.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
@@ -419,6 +475,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "hopper_body_150mm",
         filename: "hopper_body_150mm.stl",
+        repoPath: `${HOPPER}/hopper_body_150mm.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) => config.hopperHeight === "150mm",
@@ -426,6 +483,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "hopper_body_200mm",
         filename: "hopper_body_200mm.stl",
+        repoPath: `${HOPPER}/hopper_body_200mm.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) => config.hopperHeight === "200mm",
@@ -433,6 +491,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "hopper_cap",
         filename: "hopper_cap.stl",
+        repoPath: `${HOPPER}/hopper_cap.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         specialInstructions: "Print in vase mode with 0.8mm wall for best results.",
@@ -441,6 +500,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "rear_body_interface",
         filename: "rear_body_interface.stl",
+        repoPath: `${HOPPER}/rear_body_interface.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: () => true,
@@ -458,6 +518,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "gt2_86t_belt",
         filename: "GT2_86T_Belt.stl",
+        repoPath: `${CORE}/GT2_86T_Belt.stl`,
         printQuantity: 1,
         material: "tpu_95a",
         specialInstructions:
@@ -468,6 +529,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "gt2_82t_belt",
         filename: "GT2_82T_Belt.stl",
+        repoPath: `${CORE}/GT2_82T_Belt.stl`,
         printQuantity: 1,
         material: "tpu_95a",
         specialInstructions:
@@ -486,6 +548,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "6801_bearing_press",
         filename: "6801_bearing_press_helper.stl",
+        repoPath: `${TOOLS}/6801_bearing_press_helper.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         specialInstructions: "Used to press 6801-2RS bearings into housings.",
@@ -494,6 +557,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "6801_bearing_eject",
         filename: "6801_bearing_eject_helper.stl",
+        repoPath: `${TOOLS}/6801_bearing_eject_helper.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         specialInstructions: "Used to remove 6801-2RS bearings from housings.",
@@ -502,6 +566,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "6804_bearing_press",
         filename: "6804_bearing_press_helper.stl",
+        repoPath: `${TOOLS}/6804_bearing_press_helper.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         specialInstructions: "Used to press 6804-2RS bearings into housings.",
@@ -510,6 +575,7 @@ export const STL_GROUPS: StlGroup[] = [
       {
         id: "6804_bearing_eject",
         filename: "6804_bearing_eject_helper.stl",
+        repoPath: `${TOOLS}/6804_bearing_eject_helper.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
         specialInstructions: "Used to remove 6804-2RS bearings from housings.",
