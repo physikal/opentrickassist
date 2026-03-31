@@ -23,3 +23,8 @@ export interface BomCategory {
   name: string;
   items: BomItem[];
 }
+
+export interface VendorGroup {
+  vendor: string;
+  items: { item: BomItem; link: SourcingLink | null }[];
+}
