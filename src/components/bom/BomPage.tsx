@@ -2,10 +2,12 @@ import { useState, useMemo } from "react";
 import { useAppStore } from "../../store";
 import { ConfigSummaryBanner } from "../shared/ConfigSummaryBanner";
 import { BomCategorySection } from "./BomCategorySection";
-import { computeBom } from "../../lib/bom-engine";
-import { Search } from "lucide-react";
+import { BomVendorSection } from "./BomVendorSection";
+import { computeBom, groupBomByVendor } from "../../lib/bom-engine";
+import { Search, LayoutGrid, Store } from "lucide-react";
 
 type Filter = "all" | "unpurchased" | "purchased";
+type ViewMode = "category" | "vendor";
 
 export function BomPage() {
   const config = useAppStore((s) => s.config);
@@ -13,6 +15,7 @@ export function BomPage() {
   const bomTracking = useAppStore((s) => s.bomTracking);
   const [filter, setFilter] = useState<Filter>("all");
   const [search, setSearch] = useState("");
+  const [viewMode, setViewMode] = useState<ViewMode>("category");
 
   const categories = useMemo(() => computeBom(config), [config]);
 
@@ -39,6 +42,11 @@ export function BomPage() {
       }))
       .filter((cat) => cat.items.length > 0);
   }, [categories, filter, search, bomTracking]);
+
+  const vendorGroups = useMemo(
+    () => groupBomByVendor(filteredCategories),
+    [filteredCategories],
+  );
 
   if (!wizardComplete) {
     return (
@@ -93,16 +101,56 @@ export function BomPage() {
             ),
           )}
         </div>
+        <div className="flex gap-1 border-l border-gray-700 pl-3">
+          <button
+            onClick={() => setViewMode("category")}
+            title="Group by category"
+            className={[
+              "rounded-md p-1.5",
+              viewMode === "category"
+                ? "bg-primary-600 text-white"
+                : "bg-gray-800 text-gray-400 hover:text-gray-200",
+            ].join(" ")}
+          >
+            <LayoutGrid className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => setViewMode("vendor")}
+            title="Group by vendor"
+            className={[
+              "rounded-md p-1.5",
+              viewMode === "vendor"
+                ? "bg-primary-600 text-white"
+                : "bg-gray-800 text-gray-400 hover:text-gray-200",
+            ].join(" ")}
+          >
+            <Store className="h-4 w-4" />
+          </button>
+        </div>
         <span className="text-xs text-gray-500">
           {purchasedItems}/{totalItems} purchased
         </span>
       </div>
 
       <div className="space-y-3">
-        {filteredCategories.map((category) => (
-          <BomCategorySection key={category.id} category={category} />
-        ))}
-        {filteredCategories.length === 0 && (
+        {viewMode === "category" &&
+          filteredCategories.map((category) => (
+            <BomCategorySection
+              key={category.id}
+              category={category}
+            />
+          ))}
+        {viewMode === "vendor" &&
+          vendorGroups.map((group) => (
+            <BomVendorSection
+              key={group.vendor}
+              group={group}
+            />
+          ))}
+        {((viewMode === "category" &&
+          filteredCategories.length === 0) ||
+          (viewMode === "vendor" &&
+            vendorGroups.length === 0)) && (
           <p className="py-8 text-center text-sm text-gray-500">
             No items match your filters.
           </p>
