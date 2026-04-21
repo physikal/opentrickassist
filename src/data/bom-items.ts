@@ -1,4 +1,32 @@
 import type { BomCategory } from "../types/bom";
+import type { BuildConfig } from "../types/config";
+
+function isAdFx(config: BuildConfig): boolean {
+  return (
+    config.scaleType === "ad_fx120i_300i" ||
+    config.scaleType === "gg_jj223bf"
+  );
+}
+
+function memphisV1Active(config: BuildConfig): boolean {
+  return (
+    config.communityMods.includes("memphis_v1_ad_shield") &&
+    isAdFx(config)
+  );
+}
+
+function memphisV2Active(config: BuildConfig): boolean {
+  return (
+    config.communityMods.includes("memphis_v2_ad_lid") &&
+    isAdFx(config)
+  );
+}
+
+function dud3zAltPanActive(config: BuildConfig): boolean {
+  return (
+    isAdFx(config) && config.communityMods.includes("dud3z_alt_pan")
+  );
+}
 
 export const BOM_CATEGORIES: BomCategory[] = [
   {
@@ -440,7 +468,9 @@ export const BOM_CATEGORIES: BomCategory[] = [
         notes:
           "1x cup base, 1x weighing pan adapter, 8x scale shield, " +
           "3x pan cover, 2x rear discharge cup ring.",
-        requiredWhen: (config) => config.scaleType === "ad_fx120i_300i",
+        requiredWhen: (config) =>
+          config.scaleType === "ad_fx120i_300i" &&
+          !memphisV1Active(config),
       },
       {
         id: "m3x6_bhcs_ad",
@@ -452,7 +482,9 @@ export const BOM_CATEGORIES: BomCategory[] = [
         notes:
           "2x weighing pan, 2x powder cup handle, " +
           "2x pan cover locators, 2x rear discharge cup.",
-        requiredWhen: (config) => config.scaleType === "ad_fx120i_300i",
+        requiredWhen: (config) =>
+          config.scaleType === "ad_fx120i_300i" &&
+          !memphisV1Active(config),
       },
       {
         id: "m3x12_shcs_ad",
@@ -462,7 +494,9 @@ export const BOM_CATEGORIES: BomCategory[] = [
         unit: "pcs",
         sourcingLinks: [],
         notes: "FX shield lower assembly.",
-        requiredWhen: (config) => config.scaleType === "ad_fx120i_300i",
+        requiredWhen: (config) =>
+          config.scaleType === "ad_fx120i_300i" &&
+          !memphisV1Active(config),
       },
       {
         id: "m3x10_shcs_ad",
@@ -472,7 +506,9 @@ export const BOM_CATEGORIES: BomCategory[] = [
         unit: "pcs",
         sourcingLinks: [],
         notes: "Trickler adapter plate to front/rear discharger mounts.",
-        requiredWhen: (config) => config.scaleType === "ad_fx120i_300i",
+        requiredWhen: (config) =>
+          config.scaleType === "ad_fx120i_300i" &&
+          !memphisV1Active(config),
       },
       {
         id: "m3x8_shcs_ad",
@@ -482,7 +518,9 @@ export const BOM_CATEGORIES: BomCategory[] = [
         unit: "pcs",
         sourcingLinks: [],
         notes: "4x FX shield general assembly, 3x pan cover lid.",
-        requiredWhen: (config) => config.scaleType === "ad_fx120i_300i",
+        requiredWhen: (config) =>
+          config.scaleType === "ad_fx120i_300i" &&
+          !memphisV1Active(config),
       },
     ],
   },
@@ -592,6 +630,301 @@ export const BOM_CATEGORIES: BomCategory[] = [
         sourcingLinks: [],
         notes: "For status indication lighting on the trickler body.",
         requiredWhen: (config) => config.neopixelLeds === true,
+      },
+    ],
+  },
+  {
+    id: "memphis_v1",
+    name: "Memphis Mod V1 - Parts & Fasteners",
+    items: [
+      {
+        id: "memphis_v1_heatsets",
+        name: "Heatset Inserts",
+        specification: "M3x5x4mm (M3, OD 5mm, length 4mm)",
+        quantity: 24,
+        unit: "pcs",
+        sourcingLinks: [
+          {
+            vendor: "AliExpress",
+            url: "https://www.aliexpress.com/item/4000232858343.html",
+            verified: true,
+          },
+        ],
+        notes:
+          "8x display bracket, 4x enclosure bottom, " +
+          "2x rear discharge cup, plus additional locations.",
+        requiredWhen: (config) => memphisV1Active(config),
+      },
+      {
+        id: "memphis_v1_m3_nuts",
+        name: "M3 Nuts",
+        specification: "Standard M3 hex nut",
+        quantity: 4,
+        unit: "pcs",
+        sourcingLinks: [],
+        notes: "For enclosure bottom mounting.",
+        requiredWhen: (config) => memphisV1Active(config),
+      },
+      {
+        id: "memphis_v1_m3x6_bhcs",
+        name: "M3x6 BHCS",
+        specification: "M3x6mm Button Head Cap Screw",
+        quantity: 4,
+        unit: "pcs",
+        sourcingLinks: [],
+        notes: "For PCB mounting inside enclosure.",
+        requiredWhen: (config) => memphisV1Active(config),
+      },
+      {
+        id: "memphis_v1_m3x10_bhcs",
+        name: "M3x10 BHCS",
+        specification: "M3x10mm Button Head Cap Screw",
+        quantity: 16,
+        unit: "pcs",
+        sourcingLinks: [],
+        notes:
+          "Display body to bracket, bracket to scale shield, " +
+          "enclosure bottom to scale shield, scale base mounting.",
+        requiredWhen: (config) => memphisV1Active(config),
+      },
+      {
+        id: "memphis_v1_m3x10_shcs",
+        name: "M3x10 SHCS",
+        specification: "M3x10mm Socket Head Cap Screw",
+        quantity: 4,
+        unit: "pcs",
+        sourcingLinks: [],
+        notes: "Scale base to scale shield (2x), rear discharger cup (2x).",
+        requiredWhen: (config) => memphisV1Active(config),
+      },
+      {
+        id: "memphis_v1_m3x12_shcs",
+        name: "M3x12 SHCS",
+        specification: "M3x12mm Socket Head Cap Screw",
+        quantity: 4,
+        unit: "pcs",
+        sourcingLinks: [],
+        notes: "Rear discharge mount to rear body / scale shield.",
+        requiredWhen: (config) => memphisV1Active(config),
+      },
+      {
+        id: "memphis_v1_shot_glass",
+        name: "Shot Glass (Powder Cup)",
+        specification: "Height 50mm, top diameter 41.6mm",
+        quantity: 1,
+        unit: "pcs",
+        sourcingLinks: [],
+        notes: "Standard shot glass serves as the powder cup body.",
+        requiredWhen: (config) => memphisV1Active(config),
+      },
+      {
+        id: "memphis_v1_oring",
+        name: "O-Ring",
+        specification: "35mm diameter",
+        quantity: 1,
+        unit: "pcs",
+        sourcingLinks: [],
+        notes: "Optional - can be omitted if the printed cup fit is tight.",
+        requiredWhen: (config) => memphisV1Active(config),
+      },
+      {
+        id: "memphis_v1_ws2812b_led",
+        name: "WS2812B LED (with cable & connector)",
+        specification: "Single WS2812B LED module with wiring",
+        quantity: 1,
+        unit: "pcs",
+        sourcingLinks: [],
+        notes: "Uses one of the connectors from the 3D Mellow PCB. Use the DI pin.",
+        requiredWhen: (config) => memphisV1Active(config),
+      },
+      {
+        id: "memphis_v1_led_lens",
+        name: "LED Lens",
+        specification: "13mm diameter",
+        quantity: 1,
+        unit: "pcs",
+        sourcingLinks: [],
+        notes: "May need filing/sanding to fit. Press into the display front.",
+        requiredWhen: (config) => memphisV1Active(config),
+      },
+      {
+        id: "memphis_v1_acrylic_tube",
+        name: "Clear Acrylic Tube (Hopper)",
+        specification: "Outer diameter 60mm, inner diameter 56mm",
+        quantity: 1,
+        unit: "pcs",
+        sourcingLinks: [],
+        notes: "Only needed for the optional acrylic hopper.",
+        requiredWhen: (config) =>
+          memphisV1Active(config) && config.memphisV1AcrylicHopper,
+      },
+    ],
+  },
+  {
+    id: "memphis_v2",
+    name: "Memphis Mod V2 - Parts & Fasteners",
+    items: [
+      {
+        id: "memphis_v2_heatsets",
+        name: "Heatset Inserts",
+        specification: "M3xL4xOD5mm",
+        quantity: 27,
+        unit: "pcs",
+        sourcingLinks: [
+          {
+            vendor: "AliExpress (reference)",
+            url: "https://fr.aliexpress.com/item/1005006472702418.html",
+            verified: false,
+          },
+        ],
+        notes:
+          "6x rear body, 4x front body, 6x lid, 4x PCB enclosure, " +
+          "7x display (6 for right-button variant).",
+        requiredWhen: (config) => memphisV2Active(config),
+      },
+      {
+        id: "memphis_v2_magnets",
+        name: "Magnets",
+        specification: "8x2mm",
+        quantity: 8,
+        unit: "pcs",
+        sourcingLinks: [],
+        notes:
+          "4x lid closure, 2x powder bin holder, 2x funnel.",
+        requiredWhen: (config) => memphisV2Active(config),
+      },
+      {
+        id: "memphis_v2_m3x8_bhcs",
+        name: "M3x8 BHCS",
+        specification: "M3x8mm Button Head Cap Screw",
+        quantity: 1,
+        unit: "pcs",
+        sourcingLinks: [],
+        notes: "Hopper base to rear body interface.",
+        requiredWhen: (config) => memphisV2Active(config),
+      },
+      {
+        id: "memphis_v2_m3x10_bhcs",
+        name: "M3x10 BHCS",
+        specification: "M3x10mm Button Head Cap Screw",
+        quantity: 17,
+        unit: "pcs",
+        sourcingLinks: [],
+        notes:
+          "Display to lid, PCB mounting, lid wire cover, " +
+          "enclosure to rear body. 6 for right-button display variant.",
+        requiredWhen: (config) => memphisV2Active(config),
+      },
+      {
+        id: "memphis_v2_m3x20_bhcs",
+        name: "M3x20 BHCS",
+        specification: "M3x20mm Button Head Cap Screw",
+        quantity: 8,
+        unit: "pcs",
+        sourcingLinks: [],
+        notes: "Front body, rear body, and interface to lid.",
+        requiredWhen: (config) => memphisV2Active(config),
+      },
+      {
+        id: "memphis_v2_shim_washers",
+        name: "Shim Washers",
+        specification: "OD 6mm, ID 3mm, 0.5mm thick",
+        quantity: 10,
+        unit: "pcs",
+        sourcingLinks: [],
+        notes: "8x front/rear body shafts, 2x hopper.",
+        requiredWhen: (config) => memphisV2Active(config),
+      },
+      {
+        id: "memphis_v2_plexi_sheet",
+        name: "Plexiglass Sheet (Front Window)",
+        specification: "2mm thickness, 37x62.5mm",
+        quantity: 1,
+        unit: "pcs",
+        sourcingLinks: [],
+        notes: "Only needed if printing the acrylic-windowed front cover.",
+        requiredWhen: (config) => memphisV2Active(config),
+      },
+      {
+        id: "memphis_v2_acrylic_tube",
+        name: "Clear Acrylic Tube (Hopper)",
+        specification: "Outer diameter 60mm, inner diameter 56mm",
+        quantity: 1,
+        unit: "pcs",
+        sourcingLinks: [],
+        notes: "For the Memphis acrylic hopper (replaces printed hopper).",
+        requiredWhen: (config) => memphisV2Active(config),
+      },
+      {
+        id: "memphis_v2_shot_glass",
+        name: "Shot Glass (Powder Cup)",
+        specification: "Height 50mm, top diameter 41.6mm",
+        quantity: 1,
+        unit: "pcs",
+        sourcingLinks: [],
+        requiredWhen: (config) => memphisV2Active(config),
+      },
+      {
+        id: "memphis_v2_oring",
+        name: "O-Ring",
+        specification: "35mm diameter",
+        quantity: 1,
+        unit: "pcs",
+        sourcingLinks: [],
+        notes: "Optional - can be omitted if the printed cup fit is tight.",
+        requiredWhen: (config) => memphisV2Active(config),
+      },
+      {
+        id: "memphis_v2_ws2812b",
+        name: "WS2812B (Strip or PCB LED)",
+        specification: "Single LED or short strip",
+        quantity: 1,
+        unit: "pcs",
+        sourcingLinks: [
+          {
+            vendor: "AliExpress (strip)",
+            url: "https://fr.aliexpress.com/item/1005007982624217.html",
+            verified: false,
+          },
+          {
+            vendor: "AliExpress (PCB LED)",
+            url: "https://fr.aliexpress.com/item/32560280169.html",
+            verified: false,
+          },
+        ],
+        notes:
+          "Optional. Uses a connector from the 3D Mellow PCB. " +
+          "Print Lid_LEDStrip_AddOn if using a strip.",
+        requiredWhen: (config) =>
+          memphisV2Active(config) && config.neopixelLeds === true,
+      },
+      {
+        id: "memphis_v2_led_wire",
+        name: "LED Wire & JST Connector",
+        specification: "200mm wire x3, 3-pin JST 2.54mm pitch",
+        quantity: 1,
+        unit: "set",
+        sourcingLinks: [],
+        notes: "Only needed if wiring the optional WS2812B.",
+        requiredWhen: (config) =>
+          memphisV2Active(config) && config.neopixelLeds === true,
+      },
+    ],
+  },
+  {
+    id: "dud3z_alt_pan",
+    name: "Dud3z Alternative Pan",
+    items: [
+      {
+        id: "dud3z_pan_m3_screw",
+        name: "M3 Screw (Alt Pan)",
+        specification: "M3 screw, minimum length 6mm",
+        quantity: 1,
+        unit: "pcs",
+        sourcingLinks: [],
+        notes:
+          "Secures the alternative pan to the scale_weighing_pan_adapter.",
+        requiredWhen: (config) => dud3zAltPanActive(config),
       },
     ],
   },

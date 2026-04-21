@@ -43,7 +43,7 @@ export function WizardProgress({ currentStep }: WizardProgressProps) {
                         : "bg-gray-800 text-gray-500",
                   ].join(" ")}
                 >
-                  {isComplete ? "\u2713" : i}
+                  {isComplete ? "✓" : i}
                 </div>
                 {i < STEP_LABELS.length - 1 && (
                   <div

@@ -1,4 +1,5 @@
 import type { StlGroup } from "../types/stl";
+import type { BuildConfig } from "../types/config";
 
 const REPO_BASE = "STL";
 const CORE = `${REPO_BASE}/OpenTrickler`;
@@ -8,6 +9,36 @@ const TOOLS = `${CORE}/Tools`;
 const HOPPER = `${REPO_BASE}/Powder Hopper`;
 const AD_FX = `${REPO_BASE}/A&D FX Shield`;
 const GG_JJ100B = `${REPO_BASE}/G&G JJ100B housing`;
+const MEMPHIS_V1 = "CommunityContributions/Memphis/V1/STL";
+const MEMPHIS_V2 = "CommunityContributions/Memphis/V2/3MF";
+const DUD3Z = "CommunityContributions/Dud3z";
+
+function isAdFx(config: BuildConfig): boolean {
+  return (
+    config.scaleType === "ad_fx120i_300i" ||
+    config.scaleType === "gg_jj223bf"
+  );
+}
+
+function memphisV1ReplacesAdFxPart(config: BuildConfig): boolean {
+  return (
+    config.communityMods.includes("memphis_v1_ad_shield") &&
+    isAdFx(config)
+  );
+}
+
+function memphisV1HopperActive(config: BuildConfig): boolean {
+  return (
+    memphisV1ReplacesAdFxPart(config) && config.memphisV1AcrylicHopper
+  );
+}
+
+function memphisV2ReplacesCore(config: BuildConfig): boolean {
+  return (
+    config.communityMods.includes("memphis_v2_ad_lid") &&
+    isAdFx(config)
+  );
+}
 
 export const STL_GROUPS: StlGroup[] = [
   {
@@ -22,7 +53,7 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${CORE}/front_body.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: () => true,
+        requiredWhen: (config) => !memphisV2ReplacesCore(config),
       },
       {
         id: "front_body_cover",
@@ -30,7 +61,7 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${CORE}/front_body_cover.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: () => true,
+        requiredWhen: (config) => !memphisV2ReplacesCore(config),
       },
       {
         id: "rear_body",
@@ -38,7 +69,9 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${CORE}/rear_body.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: () => true,
+        requiredWhen: (config) =>
+          !memphisV1ReplacesAdFxPart(config) &&
+          !memphisV2ReplacesCore(config),
       },
       {
         id: "front_rear_door",
@@ -185,9 +218,7 @@ export const STL_GROUPS: StlGroup[] = [
     description:
       "Scale shield, adapter plates, discharge system, and powder cups " +
       "for A&D FX-120i/300i compatible scales.",
-    requiredWhen: (config) =>
-      config.scaleType === "ad_fx120i_300i" ||
-      config.scaleType === "gg_jj223bf",
+    requiredWhen: (config) => isAdFx(config),
     files: [
       {
         id: "ad_scale_shield",
@@ -196,8 +227,7 @@ export const STL_GROUPS: StlGroup[] = [
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
-          config.scaleType === "ad_fx120i_300i" ||
-          config.scaleType === "gg_jj223bf",
+          isAdFx(config) && !memphisV1ReplacesAdFxPart(config),
       },
       {
         id: "ad_trickler_adapter_plate",
@@ -205,9 +235,7 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${AD_FX}/trickler_adapter_plate.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: (config) =>
-          config.scaleType === "ad_fx120i_300i" ||
-          config.scaleType === "gg_jj223bf",
+        requiredWhen: (config) => isAdFx(config),
       },
       {
         id: "ad_scale_base_adapter_ring",
@@ -216,8 +244,7 @@ export const STL_GROUPS: StlGroup[] = [
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
-          config.scaleType === "ad_fx120i_300i" ||
-          config.scaleType === "gg_jj223bf",
+          isAdFx(config) && !memphisV1ReplacesAdFxPart(config),
       },
       {
         id: "ad_scale_weighing_pan_adapter",
@@ -225,9 +252,7 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${AD_FX}/scale_weighing_pan_adapter.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: (config) =>
-          config.scaleType === "ad_fx120i_300i" ||
-          config.scaleType === "gg_jj223bf",
+        requiredWhen: (config) => isAdFx(config),
       },
       {
         id: "ad_weighing_pan_27mm",
@@ -235,9 +260,7 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${AD_FX}/weighing_pan_27mm.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: (config) =>
-          config.scaleType === "ad_fx120i_300i" ||
-          config.scaleType === "gg_jj223bf",
+        requiredWhen: (config) => isAdFx(config),
       },
       {
         id: "ad_scale_pan_cover",
@@ -245,9 +268,7 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${AD_FX}/scale_pan_cover.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: (config) =>
-          config.scaleType === "ad_fx120i_300i" ||
-          config.scaleType === "gg_jj223bf",
+        requiredWhen: (config) => isAdFx(config),
       },
       {
         id: "ad_pan_cover",
@@ -255,9 +276,7 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${AD_FX}/pan_cover.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: (config) =>
-          config.scaleType === "ad_fx120i_300i" ||
-          config.scaleType === "gg_jj223bf",
+        requiredWhen: (config) => isAdFx(config),
       },
       {
         id: "ad_pan_cover_lid",
@@ -265,9 +284,7 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${AD_FX}/pan_cover_lid.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: (config) =>
-          config.scaleType === "ad_fx120i_300i" ||
-          config.scaleType === "gg_jj223bf",
+        requiredWhen: (config) => isAdFx(config),
       },
       {
         id: "ad_cup_base_7mm",
@@ -276,8 +293,7 @@ export const STL_GROUPS: StlGroup[] = [
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
-          config.scaleType === "ad_fx120i_300i" ||
-          config.scaleType === "gg_jj223bf",
+          isAdFx(config) && !memphisV1ReplacesAdFxPart(config),
       },
       {
         id: "ad_powder_cup_body",
@@ -285,9 +301,7 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${AD_FX}/powder_cup_body.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: (config) =>
-          config.scaleType === "ad_fx120i_300i" ||
-          config.scaleType === "gg_jj223bf",
+        requiredWhen: (config) => isAdFx(config),
       },
       {
         id: "ad_powder_cup_handle",
@@ -296,8 +310,7 @@ export const STL_GROUPS: StlGroup[] = [
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
-          config.scaleType === "ad_fx120i_300i" ||
-          config.scaleType === "gg_jj223bf",
+          isAdFx(config) && !memphisV1ReplacesAdFxPart(config),
       },
       {
         id: "ad_front_discharger_mount",
@@ -305,9 +318,7 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${AD_FX}/front_discharger_mount.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: (config) =>
-          config.scaleType === "ad_fx120i_300i" ||
-          config.scaleType === "gg_jj223bf",
+        requiredWhen: (config) => isAdFx(config),
       },
       {
         id: "ad_rear_discharge_mount",
@@ -316,8 +327,7 @@ export const STL_GROUPS: StlGroup[] = [
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
-          config.scaleType === "ad_fx120i_300i" ||
-          config.scaleType === "gg_jj223bf",
+          isAdFx(config) && !memphisV1ReplacesAdFxPart(config),
       },
       {
         id: "ad_rear_discharger_cup",
@@ -326,8 +336,7 @@ export const STL_GROUPS: StlGroup[] = [
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
-          config.scaleType === "ad_fx120i_300i" ||
-          config.scaleType === "gg_jj223bf",
+          isAdFx(config) && !memphisV1ReplacesAdFxPart(config),
       },
       {
         id: "ad_rear_discharge_cup_ring",
@@ -336,8 +345,7 @@ export const STL_GROUPS: StlGroup[] = [
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
-          config.scaleType === "ad_fx120i_300i" ||
-          config.scaleType === "gg_jj223bf",
+          isAdFx(config) && !memphisV1ReplacesAdFxPart(config),
       },
       {
         id: "ad_rear_discharger_sliding_door",
@@ -346,8 +354,7 @@ export const STL_GROUPS: StlGroup[] = [
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
-          config.scaleType === "ad_fx120i_300i" ||
-          config.scaleType === "gg_jj223bf",
+          isAdFx(config) && !memphisV1ReplacesAdFxPart(config),
       },
     ],
   },
@@ -461,7 +468,7 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${HOPPER}/hopper_base.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: () => true,
+        requiredWhen: (config) => !memphisV1HopperActive(config),
       },
       {
         id: "hopper_body_100mm",
@@ -470,7 +477,9 @@ export const STL_GROUPS: StlGroup[] = [
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
-          config.hopperHeight === "100mm" || config.hopperHeight === null,
+          !memphisV1HopperActive(config) &&
+          (config.hopperHeight === "100mm" ||
+            config.hopperHeight === null),
       },
       {
         id: "hopper_body_150mm",
@@ -478,7 +487,9 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${HOPPER}/hopper_body_150mm.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: (config) => config.hopperHeight === "150mm",
+        requiredWhen: (config) =>
+          !memphisV1HopperActive(config) &&
+          config.hopperHeight === "150mm",
       },
       {
         id: "hopper_body_200mm",
@@ -486,7 +497,9 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${HOPPER}/hopper_body_200mm.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: (config) => config.hopperHeight === "200mm",
+        requiredWhen: (config) =>
+          !memphisV1HopperActive(config) &&
+          config.hopperHeight === "200mm",
       },
       {
         id: "hopper_cap",
@@ -495,7 +508,7 @@ export const STL_GROUPS: StlGroup[] = [
         printQuantity: 1,
         material: "abs_asa_petg",
         specialInstructions: "Print in vase mode with 0.8mm wall for best results.",
-        requiredWhen: () => true,
+        requiredWhen: (config) => !memphisV1HopperActive(config),
       },
       {
         id: "rear_body_interface",
@@ -580,6 +593,504 @@ export const STL_GROUPS: StlGroup[] = [
         material: "abs_asa_petg",
         specialInstructions: "Used to remove 6804-2RS bearings from housings.",
         requiredWhen: () => true,
+      },
+    ],
+  },
+  {
+    id: "memphis_v1",
+    name: "Memphis Mod V1 - A&D FX Shield",
+    description:
+      "Redesigned A&D FX scale shield with integrated display mount, " +
+      "PCB enclosure, and scale base. Community contribution by Memphis.",
+    requiredWhen: (config) => memphisV1ReplacesAdFxPart(config),
+    files: [
+      {
+        id: "memphis_v1_rear_body_without_holes",
+        filename: "rear_body_without_holes.stl",
+        repoPath: `${MEMPHIS_V1}/rear_body_without_holes.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Replaces the stock rear body. Sides have no through-holes.",
+        requiredWhen: (config) => memphisV1ReplacesAdFxPart(config),
+      },
+      {
+        id: "memphis_v1_scale_shield",
+        filename: "scale_shield.stl",
+        repoPath: `${MEMPHIS_V1}/scale_shield.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => memphisV1ReplacesAdFxPart(config),
+      },
+      {
+        id: "memphis_v1_scale_base",
+        filename: "scale_base.stl",
+        repoPath: `${MEMPHIS_V1}/scale_base.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => memphisV1ReplacesAdFxPart(config),
+      },
+      {
+        id: "memphis_v1_cup_base",
+        filename: "cup_base.stl",
+        repoPath: `${MEMPHIS_V1}/cup_base.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "Taped to the first weighing plate.",
+        requiredWhen: (config) => memphisV1ReplacesAdFxPart(config),
+      },
+      {
+        id: "memphis_v1_powder_cup_handle",
+        filename: "powder_cup_handle.stl",
+        repoPath: `${MEMPHIS_V1}/powder_cup_handle.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => memphisV1ReplacesAdFxPart(config),
+      },
+      {
+        id: "memphis_v1_rear_discharge_mount",
+        filename: "rear_discharge_mount.stl",
+        repoPath: `${MEMPHIS_V1}/rear_discharge_mount.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => memphisV1ReplacesAdFxPart(config),
+      },
+      {
+        id: "memphis_v1_rear_discharger_cup",
+        filename: "rear_discharger_cup.stl",
+        repoPath: `${MEMPHIS_V1}/rear_discharger_cup.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => memphisV1ReplacesAdFxPart(config),
+      },
+      {
+        id: "memphis_v1_rear_discharge_cup_ring",
+        filename: "rear_discharge_cup_ring.stl",
+        repoPath: `${MEMPHIS_V1}/rear_discharge_cup_ring.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => memphisV1ReplacesAdFxPart(config),
+      },
+      {
+        id: "memphis_v1_rear_discharger_sliding_door",
+        filename: "rear_discharger_slinding_door.stl",
+        repoPath: `${MEMPHIS_V1}/rear_discharger_slinding_door.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Filename typo preserved from upstream repo.",
+        requiredWhen: (config) => memphisV1ReplacesAdFxPart(config),
+      },
+      {
+        id: "memphis_v1_display_assy_body",
+        filename: "display_assy_body.stl",
+        repoPath: `${MEMPHIS_V1}/display_assy_body.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => memphisV1ReplacesAdFxPart(config),
+      },
+      {
+        id: "memphis_v1_display_assy_bracket",
+        filename: "display_assy_bracket.stl",
+        repoPath: `${MEMPHIS_V1}/display_assy_bracket.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => memphisV1ReplacesAdFxPart(config),
+      },
+      {
+        id: "memphis_v1_display_assy_front",
+        filename: "display_assy_front.stl",
+        repoPath: `${MEMPHIS_V1}/display_assy_front.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => memphisV1ReplacesAdFxPart(config),
+      },
+      {
+        id: "memphis_v1_display_assy_button",
+        filename: "display_assy_button.stl",
+        repoPath: `${MEMPHIS_V1}/display_assy_button.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => memphisV1ReplacesAdFxPart(config),
+      },
+      {
+        id: "memphis_v1_enclosure_bottom",
+        filename: "enclosure_bottom.stl",
+        repoPath: `${MEMPHIS_V1}/enclosure_bottom.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "PCB enclosure bottom half.",
+        requiredWhen: (config) => memphisV1ReplacesAdFxPart(config),
+      },
+      {
+        id: "memphis_v1_enclosure_top",
+        filename: "enclosure_top.stl",
+        repoPath: `${MEMPHIS_V1}/enclosure_top.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "PCB enclosure top cover - snaps on.",
+        requiredWhen: (config) => memphisV1ReplacesAdFxPart(config),
+      },
+      {
+        id: "memphis_v1_hopper_base_plexi",
+        filename: "hopper_base_plexi.stl",
+        repoPath: `${MEMPHIS_V1}/hopper_base_plexi.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "For clear acrylic tube hopper (60mm OD / 56mm ID).",
+        requiredWhen: (config) => memphisV1HopperActive(config),
+      },
+      {
+        id: "memphis_v1_hopper_cap",
+        filename: "hopper_cap.stl",
+        repoPath: `${MEMPHIS_V1}/hopper_cap.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "For clear acrylic tube hopper (60mm OD / 56mm ID).",
+        requiredWhen: (config) => memphisV1HopperActive(config),
+      },
+    ],
+  },
+  {
+    id: "memphis_v2",
+    name: "Memphis Mod V2 - A&D FX Lid",
+    description:
+      "Full lid and body redesign with integrated display, PCB enclosure, " +
+      "interface, powder bin, and funnel. Files are .3mf format " +
+      "(pre-sliced projects). Community contribution by Memphis.",
+    requiredWhen: (config) => memphisV2ReplacesCore(config),
+    files: [
+      {
+        id: "memphis_v2_rear_body_no_holes_left",
+        filename: "RearBodyWithoutHolesOnTheLeft.3mf",
+        repoPath: `${MEMPHIS_V2}/RearBodyWithoutHolesOnTheLeft.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "Replaces stock rear body.",
+        requiredWhen: (config) => memphisV2ReplacesCore(config),
+      },
+      {
+        id: "memphis_v2_rear_body_interface_modified",
+        filename: "RearBodyInterfaceModified.3mf",
+        repoPath: `${MEMPHIS_V2}/RearBodyInterfaceModified.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Modified hopper/rear-body interface for easier fit.",
+        requiredWhen: (config) => memphisV2ReplacesCore(config),
+      },
+      {
+        id: "memphis_v2_front_body_with_acrylic",
+        filename: "FrontBodyWhitoutServoWithAcrylic.3mf",
+        repoPath: `${MEMPHIS_V2}/FrontBody/FrontBodyWhitoutServoWithAcrylic.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Front body with acrylic window, no servos variant. " +
+          "Filename typo preserved from upstream.",
+        requiredWhen: (config) => memphisV2ReplacesCore(config),
+      },
+      {
+        id: "memphis_v2_front_volume_reducer_with_hole",
+        filename: "FrontVolumeReducerWithHole.3mf",
+        repoPath: `${MEMPHIS_V2}/FrontBody/FrontVolumeReducerWithHole.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) =>
+          memphisV2ReplacesCore(config) && config.volumeReducer === true,
+      },
+      {
+        id: "memphis_v2_front_body_cover_with_hole",
+        filename: "FrontBodyCoverWithHole.3mf",
+        repoPath: `${MEMPHIS_V2}/FrontBody/FrontBodyCoverWithHole.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Front body cover with hole for the plexiglass window.",
+        requiredWhen: (config) => memphisV2ReplacesCore(config),
+      },
+      {
+        id: "memphis_v2_front_cover",
+        filename: "FrontCover.3mf",
+        repoPath: `${MEMPHIS_V2}/FrontBody/FrontCover.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Alternative solid front cover (no plexiglass window).",
+        requiredWhen: (config) => memphisV2ReplacesCore(config),
+      },
+      {
+        id: "memphis_v2_cap_with_hole",
+        filename: "CapWithHole.3mf",
+        repoPath: `${MEMPHIS_V2}/FrontBody/CapWithHole.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => memphisV2ReplacesCore(config),
+      },
+      {
+        id: "memphis_v2_cap",
+        filename: "Cap.3mf",
+        repoPath: `${MEMPHIS_V2}/FrontBody/Cap.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Alternative plain cap (without hole).",
+        requiredWhen: (config) => memphisV2ReplacesCore(config),
+      },
+      {
+        id: "memphis_v2_interface_no_servos",
+        filename: "Interface.3mf",
+        repoPath: `${MEMPHIS_V2}/Interface/Interface.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "Interface without servos.",
+        requiredWhen: (config) =>
+          memphisV2ReplacesCore(config) && config.servoGate !== true,
+      },
+      {
+        id: "memphis_v2_interface_with_servos",
+        filename: "InterfaceWithServos.3mf",
+        repoPath: `${MEMPHIS_V2}/Interface/InterfaceWithServos.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "Interface with servo cutouts.",
+        requiredWhen: (config) =>
+          memphisV2ReplacesCore(config) && config.servoGate === true,
+      },
+      {
+        id: "memphis_v2_interface_front_flap",
+        filename: "InterfaceFrontFlap.3mf",
+        repoPath: `${MEMPHIS_V2}/Interface/InterfaceFrontFlap.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => memphisV2ReplacesCore(config),
+      },
+      {
+        id: "memphis_v2_interface_rear_flap",
+        filename: "InterfaceRearFlap.3mf",
+        repoPath: `${MEMPHIS_V2}/Interface/InterfaceRearFlap.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => memphisV2ReplacesCore(config),
+      },
+      {
+        id: "memphis_v2_lid_no_servos",
+        filename: "Lid_NoServos.3mf",
+        repoPath: `${MEMPHIS_V2}/Lid/Lid_NoServos.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) =>
+          memphisV2ReplacesCore(config) && config.servoGate !== true,
+      },
+      {
+        id: "memphis_v2_lid_servos",
+        filename: "Lid_Servos.3mf",
+        repoPath: `${MEMPHIS_V2}/Lid/Lid_Servos.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) =>
+          memphisV2ReplacesCore(config) && config.servoGate === true,
+      },
+      {
+        id: "memphis_v2_lid_wire_cover",
+        filename: "Lid_WireCover.3mf",
+        repoPath: `${MEMPHIS_V2}/Lid/Lid_WireCover.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => memphisV2ReplacesCore(config),
+      },
+      {
+        id: "memphis_v2_small_cable_lock",
+        filename: "SmallCableLock.3mf",
+        repoPath: `${MEMPHIS_V2}/Lid/SmallCableLock.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => memphisV2ReplacesCore(config),
+      },
+      {
+        id: "memphis_v2_big_cable_block",
+        filename: "BigCableBlock.3mf",
+        repoPath: `${MEMPHIS_V2}/Lid/BigCableBlock.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => memphisV2ReplacesCore(config),
+      },
+      {
+        id: "memphis_v2_powder_bin",
+        filename: "PowderBin.3mf",
+        repoPath: `${MEMPHIS_V2}/Lid/PowderBin.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => memphisV2ReplacesCore(config),
+      },
+      {
+        id: "memphis_v2_powder_bin_bracket",
+        filename: "PowderBinBracket.3mf",
+        repoPath: `${MEMPHIS_V2}/Lid/PowderBinBracket.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => memphisV2ReplacesCore(config),
+      },
+      {
+        id: "memphis_v2_funnel_33mm",
+        filename: "Funnel33mm.3mf",
+        repoPath: `${MEMPHIS_V2}/Lid/Funnel33mm.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "33mm funnel for standard 41.6mm shot glass.",
+        requiredWhen: (config) => memphisV2ReplacesCore(config),
+      },
+      {
+        id: "memphis_v2_lid_led_strip_addon",
+        filename: "Lid_LEDStrip_AddOn.3mf",
+        repoPath: `${MEMPHIS_V2}/Lid_LEDStrip_AddOn.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Optional - print only if using a WS2812B LED strip.",
+        requiredWhen: (config) =>
+          memphisV2ReplacesCore(config) &&
+          config.neopixelLeds === true,
+      },
+      {
+        id: "memphis_v2_display_bigtreetech_back",
+        filename: "BigTreetechScreen_Back.3mf",
+        repoPath: `${MEMPHIS_V2}/Display/BigTreetechScreen_Back.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) =>
+          memphisV2ReplacesCore(config) &&
+          config.memphisV2Display === "bigtreetech",
+      },
+      {
+        id: "memphis_v2_display_bigtreetech_front",
+        filename: "BigTreetechScreen_Front.3mf",
+        repoPath: `${MEMPHIS_V2}/Display/BigTreetechScreen_Front.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) =>
+          memphisV2ReplacesCore(config) &&
+          config.memphisV2Display === "bigtreetech",
+      },
+      {
+        id: "memphis_v2_display_fly_left_back",
+        filename: "FlyScreen_Back.3mf",
+        repoPath: `${MEMPHIS_V2}/Display/FlyScreen_Back.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "Fly display with button on the left.",
+        requiredWhen: (config) =>
+          memphisV2ReplacesCore(config) &&
+          config.memphisV2Display === "fly_left",
+      },
+      {
+        id: "memphis_v2_display_fly_left_front",
+        filename: "FlyScreen_Front.3mf",
+        repoPath: `${MEMPHIS_V2}/Display/FlyScreen_Front.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) =>
+          memphisV2ReplacesCore(config) &&
+          config.memphisV2Display === "fly_left",
+      },
+      {
+        id: "memphis_v2_display_fly_right_back",
+        filename: "FlyScreen_RightButton_Back.3mf",
+        repoPath: `${MEMPHIS_V2}/Display/FlyScreen_RightButton_Back.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "Fly display with button on the right.",
+        requiredWhen: (config) =>
+          memphisV2ReplacesCore(config) &&
+          config.memphisV2Display === "fly_right",
+      },
+      {
+        id: "memphis_v2_display_fly_right_front",
+        filename: "FlyScreen_RightButton_Front.3mf",
+        repoPath: `${MEMPHIS_V2}/Display/FlyScreen_RightButton_Front.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) =>
+          memphisV2ReplacesCore(config) &&
+          config.memphisV2Display === "fly_right",
+      },
+      {
+        id: "memphis_v2_pcb_enclosure",
+        filename: "Enclosure.3mf",
+        repoPath: `${MEMPHIS_V2}/PCB/Enclosure.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => memphisV2ReplacesCore(config),
+      },
+      {
+        id: "memphis_v2_pcb_enclosure_lid",
+        filename: "Enclosure_Lid.3mf",
+        repoPath: `${MEMPHIS_V2}/PCB/Enclosure_Lid.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => memphisV2ReplacesCore(config),
+      },
+      {
+        id: "memphis_v2_hopper_base_plexi",
+        filename: "HopperBasePlexi.3mf",
+        repoPath: `${MEMPHIS_V2}/Hopper/HopperBasePlexi.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "For clear acrylic tube hopper (60mm OD / 56mm ID).",
+        requiredWhen: (config) => memphisV2ReplacesCore(config),
+      },
+      {
+        id: "memphis_v2_hopper_cap",
+        filename: "HopperCap.3mf",
+        repoPath: `${MEMPHIS_V2}/Hopper/HopperCap.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => memphisV2ReplacesCore(config),
+      },
+      {
+        id: "memphis_v2_powder_cup_handle",
+        filename: "PowderCuphandle.3mf",
+        repoPath: `${MEMPHIS_V2}/PowderCuphandle.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => memphisV2ReplacesCore(config),
+      },
+      {
+        id: "memphis_v2_cup_stop",
+        filename: "CupStop.3mf",
+        repoPath: `${MEMPHIS_V2}/CupStop.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "Glue on with a school glue stick.",
+        requiredWhen: (config) => memphisV2ReplacesCore(config),
+      },
+    ],
+  },
+  {
+    id: "dud3z_alt_pan",
+    name: "Dud3z Alternative Weighing Pan",
+    description:
+      "Debris-resistant weighing pan for use with Memphis V1. " +
+      "Requires the stock scale_weighing_pan_adapter.stl (already in the A&D FX Shield group).",
+    requiredWhen: (config) =>
+      isAdFx(config) &&
+      config.communityMods.includes("dud3z_alt_pan"),
+    files: [
+      {
+        id: "dud3z_alt_pan_stl",
+        filename: "AlternativePanMemphisMod.stl",
+        repoPath: `${DUD3Z}/AlternativePanMemphisMod.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Antistatic filament recommended. No supports needed. " +
+          "Screws to scale_weighing_pan_adapter with 1x M3 screw (>=6mm).",
+        requiredWhen: (config) =>
+          isAdFx(config) &&
+          config.communityMods.includes("dud3z_alt_pan"),
       },
     ],
   },

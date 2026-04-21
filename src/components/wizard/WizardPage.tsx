@@ -42,7 +42,10 @@ export function WizardPage() {
       case 7:
         return config.beltType !== null;
       case 8:
-        return true;
+        return (
+          !config.communityMods.includes("memphis_v2_ad_lid") ||
+          config.memphisV2Display !== null
+        );
       case 9:
         return true;
       default:

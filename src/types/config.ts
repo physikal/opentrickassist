@@ -3,8 +3,14 @@ export type ControllerVersion = "v1" | "v2";
 export type FlowRate = "low" | "mid" | "high";
 export type HopperHeight = "100mm" | "150mm" | "200mm";
 export type BeltType = "tpu_printed" | "aftermarket_gt2";
+export type MemphisV2Display = "bigtreetech" | "fly_left" | "fly_right";
 
 export type CommunityModId =
+  | "memphis_v1_ad_shield"
+  | "memphis_v2_ad_lid"
+  | "crayons82_ad_shield"
+  | "dirtbit_rear_body_mod"
+  | "dud3z_alt_pan"
   | "hayamini_controller_case"
   | "hayamini_cable_management"
   | "neopixel_led_mod"
@@ -28,6 +34,8 @@ export interface BuildConfig {
   beltType: BeltType | null;
   communityMods: CommunityModId[];
   neopixelLeds: boolean | null;
+  memphisV2Display: MemphisV2Display | null;
+  memphisV1AcrylicHopper: boolean;
 }
 
 export const INITIAL_CONFIG: BuildConfig = {
@@ -40,4 +48,14 @@ export const INITIAL_CONFIG: BuildConfig = {
   beltType: null,
   communityMods: [],
   neopixelLeds: null,
+  memphisV2Display: null,
+  memphisV1AcrylicHopper: false,
 };
+
+export function isMemphisCompatibleScale(
+  scaleType: ScaleType | null,
+): boolean {
+  return (
+    scaleType === "ad_fx120i_300i" || scaleType === "gg_jj223bf"
+  );
+}

@@ -8,8 +8,10 @@ import type {
   FlowRate,
   HopperHeight,
   BeltType,
+  MemphisV2Display,
 } from "../types/config";
 import { INITIAL_CONFIG } from "../types/config";
+import { getExclusiveGroup, getModsInGroup } from "../data/community-mods";
 import { validatePersistedState } from "./validation";
 
 export interface TrackingEntry {
@@ -37,6 +39,8 @@ export interface AppState {
   setHopperHeight: (value: HopperHeight) => void;
   setBeltType: (value: BeltType) => void;
   setNeopixelLeds: (value: boolean) => void;
+  setMemphisV2Display: (value: MemphisV2Display | null) => void;
+  setMemphisV1AcrylicHopper: (value: boolean) => void;
   toggleCommunityMod: (modId: CommunityModId) => void;
   setWizardStep: (step: number) => void;
   completeWizard: () => void;
@@ -52,7 +56,7 @@ export interface AppState {
   exportState: () => string;
 }
 
-const CURRENT_SCHEMA_VERSION = 1;
+const CURRENT_SCHEMA_VERSION = 2;
 
 const DEFAULT_TRACKING: TrackingEntry = {
   purchased: false,
@@ -109,12 +113,59 @@ export const useAppStore = create<AppState>()(
           config: { ...s.config, neopixelLeds: value },
         })),
 
+      setMemphisV2Display: (value) =>
+        set((s) => ({
+          config: { ...s.config, memphisV2Display: value },
+        })),
+      setMemphisV1AcrylicHopper: (value) =>
+        set((s) => ({
+          config: { ...s.config, memphisV1AcrylicHopper: value },
+        })),
+
       toggleCommunityMod: (modId) =>
         set((s) => {
-          const mods = s.config.communityMods.includes(modId)
-            ? s.config.communityMods.filter((m) => m !== modId)
-            : [...s.config.communityMods, modId];
-          return { config: { ...s.config, communityMods: mods } };
+          const isActive = s.config.communityMods.includes(modId);
+          let mods: CommunityModId[];
+          if (isActive) {
+            mods = s.config.communityMods.filter((m) => m !== modId);
+          } else {
+            const group = getExclusiveGroup(modId);
+            const blocked = group
+              ? new Set(getModsInGroup(group))
+              : new Set<CommunityModId>();
+            mods = s.config.communityMods.filter(
+              (m) => !blocked.has(m),
+            );
+            mods.push(modId);
+          }
+
+          const deselectedV1 =
+            isActive && modId === "memphis_v1_ad_shield";
+          const deselectedV2 =
+            isActive && modId === "memphis_v2_ad_lid";
+          const replacingV1 =
+            !isActive &&
+            s.config.communityMods.includes("memphis_v1_ad_shield") &&
+            !mods.includes("memphis_v1_ad_shield");
+          const replacingV2 =
+            !isActive &&
+            s.config.communityMods.includes("memphis_v2_ad_lid") &&
+            !mods.includes("memphis_v2_ad_lid");
+
+          return {
+            config: {
+              ...s.config,
+              communityMods: mods,
+              memphisV1AcrylicHopper:
+                deselectedV1 || replacingV1
+                  ? false
+                  : s.config.memphisV1AcrylicHopper,
+              memphisV2Display:
+                deselectedV2 || replacingV2
+                  ? null
+                  : s.config.memphisV2Display,
+            },
+          };
         }),
 
       setWizardStep: (step) => set({ wizardStep: step }),
@@ -247,6 +298,43 @@ export const useAppStore = create<AppState>()(
       name: "opentrickler-build",
       version: CURRENT_SCHEMA_VERSION,
       storage: createJSONStorage(() => localStorage),
+      migrate: (persistedState, version) => {
+        const state = persistedState as Partial<AppState> & {
+          config?: Partial<BuildConfig> & {
+            memphisMod?: "none" | "v1" | "v2";
+          };
+        };
+        if (version < 2 && state.config) {
+          const legacyMemphis = state.config.memphisMod;
+          const existingMods = (state.config.communityMods ??
+            []) as CommunityModId[];
+          const extraMods: CommunityModId[] = [];
+          if (
+            legacyMemphis === "v1" &&
+            !existingMods.includes("memphis_v1_ad_shield")
+          ) {
+            extraMods.push("memphis_v1_ad_shield");
+          }
+          if (
+            legacyMemphis === "v2" &&
+            !existingMods.includes("memphis_v2_ad_lid")
+          ) {
+            extraMods.push("memphis_v2_ad_lid");
+          }
+          const { memphisMod: _legacy, ...restConfig } = state.config;
+          void _legacy;
+          state.config = {
+            ...INITIAL_CONFIG,
+            ...restConfig,
+            communityMods: [...existingMods, ...extraMods],
+            memphisV2Display: state.config.memphisV2Display ?? null,
+            memphisV1AcrylicHopper:
+              state.config.memphisV1AcrylicHopper ?? false,
+          };
+          state.schemaVersion = 2;
+        }
+        return state as AppState;
+      },
       partialize: (state) => ({
         schemaVersion: state.schemaVersion,
         config: state.config,

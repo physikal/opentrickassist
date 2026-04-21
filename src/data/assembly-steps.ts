@@ -255,6 +255,222 @@ export const ASSEMBLY_SECTIONS: AssemblySection[] = [
     ],
   },
   {
+    id: "memphis_v1_assembly",
+    title: "Memphis Mod V1 Assembly",
+    description:
+      "Assemble the Memphis V1 A&D FX shield, display mount, PCB enclosure, " +
+      "and rear discharge system.",
+    guideUrl:
+      "https://github.com/eamars/OpenTrickler/blob/main/CommunityContributions/Memphis/V1/readme.md",
+    requiredWhen: (c) =>
+      c.communityMods.includes("memphis_v1_ad_shield") &&
+      (c.scaleType === "ad_fx120i_300i" ||
+        c.scaleType === "gg_jj223bf"),
+    steps: [
+      {
+        id: "memphis_v1_heatsets",
+        title: "Install heatset inserts",
+        description:
+          "Press 24x M3x5x4 heatsets into the Memphis parts: 8x display bracket, " +
+          "4x enclosure bottom, 4x display front, 2x rear discharge cup, " +
+          "plus additional locations per the upstream guide.",
+      },
+      {
+        id: "memphis_v1_rear_discharge",
+        title: "Assemble rear discharge mount",
+        description:
+          "Use 4x M3x12 SHCS to join the rear_discharge_mount to the " +
+          "rear_body_without_holes and the scale_shield.",
+      },
+      {
+        id: "memphis_v1_display",
+        title: "Assemble display module",
+        description:
+          "Join display_assy_body to display_assy_bracket with 4x M3x10 BHCS, " +
+          "then attach display_assy_front with 4x M3x12 SHCS. Mount to scale_shield " +
+          "with 4x M3x10 BHCS. Route display cables along the bracket.",
+      },
+      {
+        id: "memphis_v1_led",
+        title: "Install WS2812B LED",
+        description:
+          "Wire a WS2812B LED using a connector from the 3D Mellow PCB (use the DI pin). " +
+          "Fit the 13mm lens into the display front, filing to tolerance if needed.",
+      },
+      {
+        id: "memphis_v1_pcb_enclosure",
+        title: "Assemble PCB enclosure",
+        description:
+          "Press 4x heatsets into enclosure_bottom. Attach to scale_shield with " +
+          "4x M3x10 BHCS and 4x M3 nuts. Route cables, then secure the PCB with " +
+          "4x M3x6 BHCS. Snap on enclosure_top.",
+      },
+      {
+        id: "memphis_v1_scale_base",
+        title: "Mount scale base",
+        description:
+          "Attach scale_base to scale_shield with 4x M3x10 SHCS and 2x M3x10 BHCS.",
+      },
+      {
+        id: "memphis_v1_cup",
+        title: "Assemble powder cup",
+        description:
+          "Use the shot glass (50mm tall, 41.6mm top diameter) as the cup body. " +
+          "Attach to powder_cup_handle. Add the 35mm o-ring if the fit is loose.",
+      },
+      {
+        id: "memphis_v1_rear_cup",
+        title: "Assemble rear discharger cup",
+        description:
+          "Press 2x heatsets into rear_discharge_cup_ring. Secure rear_discharger_cup " +
+          "with 2x M3x10 SHCS.",
+      },
+      {
+        id: "memphis_v1_acrylic_hopper",
+        title: "Install acrylic hopper (optional)",
+        description:
+          "Fit the clear acrylic tube (60mm OD / 56mm ID) between hopper_base_plexi " +
+          "and hopper_cap.",
+      },
+    ],
+  },
+  {
+    id: "memphis_v2_assembly",
+    title: "Memphis Mod V2 Assembly",
+    description:
+      "Assemble the Memphis V2 redesigned lid, front and rear body, display mount, " +
+      "PCB enclosure, powder bin, and funnel.",
+    guideUrl:
+      "https://github.com/eamars/OpenTrickler/blob/main/CommunityContributions/Memphis/V2/readme.md",
+    requiredWhen: (c) =>
+      c.communityMods.includes("memphis_v2_ad_lid") &&
+      (c.scaleType === "ad_fx120i_300i" ||
+        c.scaleType === "gg_jj223bf"),
+    steps: [
+      {
+        id: "memphis_v2_heatsets",
+        title: "Install heatset inserts",
+        description:
+          "Press 27x M3xL4xOD5 heatsets: 6x rear body, 4x front body, 6x lid, " +
+          "4x PCB enclosure, 7x display (6 for right-button variant).",
+      },
+      {
+        id: "memphis_v2_rear_body",
+        title: "Assemble rear body",
+        description:
+          "Install 6804 and 6801 bearings, NEMA 17 steppers, 40-tooth GT2 pulleys, " +
+          "and GT2 belts (166mm and 174mm) into RearBodyWithoutHolesOnTheLeft. " +
+          "Fasten with 8x M3x8 BHCS and 8x shim washers.",
+      },
+      {
+        id: "memphis_v2_front_body",
+        title: "Assemble front body",
+        description:
+          "Install 6804 and 6801 bearings into FrontBodyWhitoutServoWithAcrylic. " +
+          "Fit the 2mm x 37x62.5mm plexiglass window if using the acrylic variant.",
+      },
+      {
+        id: "memphis_v2_interface",
+        title: "Assemble interface",
+        description:
+          "Print Interface or InterfaceWithServos (match your servo gate choice). " +
+          "Attach InterfaceFrontFlap and InterfaceRearFlap.",
+      },
+      {
+        id: "memphis_v2_lid",
+        title: "Mount lid",
+        description:
+          "Install 6 heatsets and 4 magnets in Lid_NoServos or Lid_Servos. " +
+          "Join front body, rear body, and interface to the lid with 8x M3x20 BHCS.",
+      },
+      {
+        id: "memphis_v2_display",
+        title: "Assemble display",
+        description:
+          "Install heatsets in the display back (7x for left-button, 6x for right-button). " +
+          "Fasten the Mini 12864 with 4x M3x10 BHCS. Mount to the lid with 3x M3x10 BHCS " +
+          "(2x for right-button variant). Route cables through to the back.",
+      },
+      {
+        id: "memphis_v2_pcb_enclosure",
+        title: "Assemble PCB enclosure",
+        description:
+          "Install 4x heatsets in Enclosure. Mount to the rear body with 2x M3x8 BHCS. " +
+          "Route all cables, connect to PCB, secure PCB with 4x M3x10 BHCS. " +
+          "Test the trickler, then close with Enclosure_Lid.",
+      },
+      {
+        id: "memphis_v2_close_lid",
+        title: "Close the lid",
+        description:
+          "Install Lid_WireCover, SmallCableLock, and BigCableBlock with 6x M3x10 BHCS.",
+      },
+      {
+        id: "memphis_v2_hopper",
+        title: "Install acrylic hopper",
+        description:
+          "Fit the clear acrylic tube (60mm OD / 56mm ID) between HopperBasePlexi " +
+          "and HopperCap. Attach RearBodyInterfaceModified. Secure with 1x M3x8 BHCS " +
+          "and 2x shim washers.",
+      },
+      {
+        id: "memphis_v2_powder_bin",
+        title: "Assemble powder bin and funnel",
+        description:
+          "Place 2 magnets in PowderBinBracket and glue to PowderBin. " +
+          "Place 2 magnets in Funnel33mm. The 33mm funnel matches a 41.6mm shot glass.",
+      },
+      {
+        id: "memphis_v2_cup",
+        title: "Assemble powder cup and cup stop",
+        description:
+          "Use the shot glass (50mm tall, 41.6mm top diameter) with PowderCuphandle. " +
+          "Add the 35mm o-ring if loose. Glue CupStop with a school glue stick.",
+      },
+      {
+        id: "memphis_v2_led",
+        title: "Install WS2812B LED (optional)",
+        description:
+          "If using a WS2812B, wire with 3x 200mm leads and a 3-pin 2.54mm JST " +
+          "connector. Position the LED and route wires to the back. " +
+          "Print Lid_LEDStrip_AddOn if using a strip.",
+      },
+    ],
+  },
+  {
+    id: "dud3z_alt_pan_assembly",
+    title: "Dud3z Alternative Pan",
+    description:
+      "Install the Dud3z debris-resistant weighing pan on the A&D FX scale.",
+    guideUrl:
+      "https://github.com/eamars/OpenTrickler/blob/main/CommunityContributions/Dud3z/readme.md",
+    requiredWhen: (c) =>
+      c.communityMods.includes("dud3z_alt_pan") &&
+      (c.scaleType === "ad_fx120i_300i" ||
+        c.scaleType === "gg_jj223bf"),
+    steps: [
+      {
+        id: "dud3z_install_heatset",
+        title: "Install heatset in pan adapter",
+        description:
+          "Melt an M3 brass insert into the stock scale_weighing_pan_adapter.",
+      },
+      {
+        id: "dud3z_mount_adapter",
+        title: "Mount adapter to load cell",
+        description:
+          "Place the scale_weighing_pan_adapter onto the load cell of the A&D FX scale.",
+      },
+      {
+        id: "dud3z_secure_pan",
+        title: "Secure alternative pan",
+        description:
+          "Fasten the Dud3z pan to the adapter with an M3 screw (min 6mm). " +
+          "Confirm the pan sits level and clears the scale housing and draft shield.",
+      },
+    ],
+  },
+  {
     id: "tuning",
     title: "PID Tuning & Calibration",
     description:

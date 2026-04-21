@@ -12,6 +12,11 @@ const BuildConfigSchema = z.object({
   beltType: z.enum(["tpu_printed", "aftermarket_gt2"]).nullable(),
   communityMods: z.array(z.string()),
   neopixelLeds: z.boolean().nullable(),
+  memphisV2Display: z
+    .enum(["bigtreetech", "fly_left", "fly_right"])
+    .nullable()
+    .default(null),
+  memphisV1AcrylicHopper: z.boolean().default(false),
 });
 
 const TrackingEntrySchema = z.object({

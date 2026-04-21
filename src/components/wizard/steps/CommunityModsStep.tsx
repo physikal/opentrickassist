@@ -1,177 +1,260 @@
 import { StepLayout } from "../StepLayout";
 import { useAppStore } from "../../../store";
-import type { CommunityModId } from "../../../types/config";
-import { Check, Info } from "lucide-react";
+import {
+  COMMUNITY_MODS,
+  type ModDefinition,
+} from "../../../data/community-mods";
+import type { MemphisV2Display } from "../../../types/config";
+import {
+  Check,
+  Info,
+  ExternalLink,
+  AlertTriangle,
+  Eye,
+} from "lucide-react";
 
-interface ModDefinition {
-  id: CommunityModId;
-  name: string;
-  author: string;
-  description: string;
-  requiresWhen?: (config: {
-    scaleType: string | null;
-    controllerVersion: string | null;
-    servoGate: boolean | null;
-  }) => boolean;
-}
-
-const COMMUNITY_MODS: ModDefinition[] = [
+const DISPLAY_OPTIONS: {
+  id: MemphisV2Display;
+  label: string;
+  hint: string;
+}[] = [
   {
-    id: "hayamini_controller_case",
-    name: "Controller Board Case",
-    author: "HayaminiNL",
-    description:
-      "Enclosure for the Pico motor expansion board (v2.0/2.1 USB-C). Includes mounting bracket for rear motor assembly.",
-    requiresWhen: (c) => c.controllerVersion === "v2",
+    id: "bigtreetech",
+    label: "BigTreeTech",
+    hint: "BigTreeTech Mini 12864",
   },
   {
-    id: "hayamini_cable_management",
-    name: "Servo Cable Management",
-    author: "HayaminiNL",
-    description:
-      "Cable management system for servo gate wiring. Keeps wires tidy and out of the way.",
-    requiresWhen: (c) => c.servoGate === true,
+    id: "fly_left",
+    label: "Fly (button left)",
+    hint: "Fly Mini 12864 - button on left",
   },
   {
-    id: "neopixel_led_mod",
-    name: "Neopixel LED Status Lights",
-    author: "eamars",
-    description:
-      "3x RGB Neopixel LEDs for status indication. Shows trickler state visually.",
-  },
-  {
-    id: "dewey_windowed_front",
-    name: "Windowed Front Body",
-    author: "Dewey",
-    description:
-      "Front body variant with a window cutout for a plexiglass panel. Lets you see the powder level inside the trickler.",
-  },
-  {
-    id: "dewey_cup_holster",
-    name: "Cup Holster",
-    author: "Dewey",
-    description:
-      "Convenient holster to hold the powder cup when not in use on the scale.",
-  },
-  {
-    id: "ian99rt_gearless_shutter",
-    name: "Gearless Shutter",
-    author: "ian99rt",
-    description:
-      "Alternative shutter design that doesn't use gears. Simplified servo gate mechanism.",
-    requiresWhen: (c) => c.servoGate === true,
-  },
-  {
-    id: "mattyy_p_extended_servo",
-    name: "Extended Servo Support",
-    author: "mattyy_p",
-    description: "Extended mounting bracket for servo motors.",
-    requiresWhen: (c) => c.servoGate === true,
-  },
-  {
-    id: "mattyy_p_hollow_tube",
-    name: "Hollow Trickler Tube",
-    author: "mattyy_p",
-    description:
-      "Alternative hollow trickler tube design for different flow characteristics.",
-  },
-  {
-    id: "1harrym_water_bottle_adapter",
-    name: "Water Bottle Hopper Adapter",
-    author: "1harrym",
-    description:
-      "Adapter to use a standard water bottle as a powder hopper. High capacity alternative to printed hoppers.",
-  },
-  {
-    id: "golmeth_lee_bottle_adapter",
-    name: "Lee Bottle Adapter",
-    author: "Golmeth",
-    description:
-      "Adapter for Lee powder bottle to feed directly into the hopper.",
-  },
-  {
-    id: "4numen_phone_holder",
-    name: "Phone Holder",
-    author: "4numen",
-    description:
-      "Mount for your phone near the trickler. Useful for monitoring the web interface.",
-  },
-  {
-    id: "4numen_jj100b_bumper",
-    name: "JJ100B Scale Bumper",
-    author: "4numen",
-    description:
-      "Protective bumper for the G&G JJ100B scale housing.",
-    requiresWhen: (c) => c.scaleType === "gg_jj100b",
+    id: "fly_right",
+    label: "Fly (button right)",
+    hint: "Fly Mini 12864 - button on right",
   },
 ];
 
+function ImpactBadge({ mod }: { mod: ModDefinition }) {
+  if (mod.impact === "replaces") {
+    return (
+      <span className="inline-flex items-center gap-1 rounded bg-warning-500/20 px-1.5 py-0.5 text-[10px] font-medium text-warning-500">
+        <AlertTriangle className="h-3 w-3" />
+        Replaces base parts
+      </span>
+    );
+  }
+  if (mod.impact === "preview") {
+    return (
+      <span className="inline-flex items-center gap-1 rounded bg-gray-700 px-1.5 py-0.5 text-[10px] font-medium text-gray-300">
+        <Eye className="h-3 w-3" />
+        Preview - guide only
+      </span>
+    );
+  }
+  return null;
+}
+
+function ModCard({ mod }: { mod: ModDefinition }) {
+  const config = useAppStore((s) => s.config);
+  const toggleCommunityMod = useAppStore((s) => s.toggleCommunityMod);
+  const setMemphisV1AcrylicHopper = useAppStore(
+    (s) => s.setMemphisV1AcrylicHopper,
+  );
+  const setMemphisV2Display = useAppStore(
+    (s) => s.setMemphisV2Display,
+  );
+
+  const compatible = mod.requiresWhen
+    ? mod.requiresWhen(config)
+    : true;
+  const selected = config.communityMods.includes(mod.id);
+
+  return (
+    <div
+      className={[
+        "rounded-lg border p-3 transition-all",
+        selected
+          ? "border-primary-500 bg-primary-500/10"
+          : !compatible
+            ? "cursor-not-allowed border-gray-800 opacity-40"
+            : "border-gray-700 hover:border-gray-600 hover:bg-gray-800/50",
+      ].join(" ")}
+    >
+      <button
+        type="button"
+        onClick={() => compatible && toggleCommunityMod(mod.id)}
+        disabled={!compatible}
+        className="w-full text-left"
+      >
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex-1">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <h4
+                className={[
+                  "text-sm font-medium",
+                  selected ? "text-primary-300" : "text-gray-200",
+                ].join(" ")}
+              >
+                {mod.name}
+              </h4>
+              <ImpactBadge mod={mod} />
+            </div>
+            <p className="mt-0.5 text-[10px] text-gray-500">
+              by {mod.author}
+            </p>
+            <p className="mt-1 text-xs text-gray-400">
+              {mod.description}
+            </p>
+            {mod.previewNote && (
+              <p className="mt-1 text-xs text-amber-400">
+                {mod.previewNote}
+              </p>
+            )}
+          </div>
+          {selected && (
+            <Check className="mt-1 h-4 w-4 shrink-0 text-primary-400" />
+          )}
+        </div>
+      </button>
+
+      {mod.docUrl && (
+        <a
+          href={mod.docUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-2 inline-flex items-center gap-1 text-[11px] text-primary-400 hover:text-primary-300"
+        >
+          Upstream guide
+          <ExternalLink className="h-3 w-3" />
+        </a>
+      )}
+
+      {selected && mod.id === "memphis_v1_ad_shield" && (
+        <label className="mt-3 flex items-start gap-2 rounded border border-gray-700 bg-gray-900/50 p-2">
+          <input
+            type="checkbox"
+            className="mt-0.5 h-4 w-4 rounded border-gray-600 bg-gray-900 text-primary-500 focus:ring-primary-500"
+            checked={config.memphisV1AcrylicHopper}
+            onChange={(e) =>
+              setMemphisV1AcrylicHopper(e.target.checked)
+            }
+          />
+          <div className="flex-1">
+            <span className="text-xs font-medium text-gray-200">
+              Use clear acrylic tube hopper
+            </span>
+            <p className="mt-0.5 text-[11px] text-gray-500">
+              Replaces the printed hopper with a 60mm OD / 56mm ID
+              acrylic tube using Memphis&apos;s hopper_base_plexi /
+              hopper_cap STLs.
+            </p>
+          </div>
+        </label>
+      )}
+
+      {selected && mod.id === "memphis_v2_ad_lid" && (
+        <div className="mt-3 rounded border border-gray-700 bg-gray-900/50 p-2">
+          <p className="text-xs font-medium text-gray-200">
+            Display choice
+          </p>
+          <p className="mt-0.5 text-[11px] text-gray-500">
+            V2 has separate mount files for two display brands.
+            Required to proceed.
+          </p>
+          <div className="mt-2 grid gap-1.5 sm:grid-cols-3">
+            {DISPLAY_OPTIONS.map((d) => {
+              const active = config.memphisV2Display === d.id;
+              return (
+                <button
+                  key={d.id}
+                  type="button"
+                  onClick={() => setMemphisV2Display(d.id)}
+                  className={[
+                    "rounded border p-2 text-left text-[11px]",
+                    active
+                      ? "border-primary-500 bg-primary-500/10 text-primary-200"
+                      : "border-gray-700 text-gray-300 hover:border-gray-600",
+                  ].join(" ")}
+                >
+                  <div className="font-medium">{d.label}</div>
+                  <div className="mt-0.5 text-[10px] text-gray-500">
+                    {d.hint}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          {config.memphisV2Display === null && (
+            <p className="mt-2 text-[11px] text-amber-400">
+              Pick a display brand to include the correct mount files.
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function CommunityModsStep() {
   const config = useAppStore((s) => s.config);
-  const communityMods = config.communityMods;
-  const toggleCommunityMod = useAppStore((s) => s.toggleCommunityMod);
+  const visibleMods = COMMUNITY_MODS.filter(
+    (m) => !m.requiresWhen || m.requiresWhen(config),
+  );
+
+  const fullBuildMods = visibleMods.filter(
+    (m) => m.exclusiveGroup === "ad_fx_shield_variant",
+  );
+  const addonMods = visibleMods.filter(
+    (m) => m.exclusiveGroup !== "ad_fx_shield_variant",
+  );
 
   return (
     <StepLayout
       title="Community Modifications"
-      description="Optional modifications created by community members. Select any that interest you -- they'll be added to your print list."
+      description="Optional modifications created by community members. Select any that interest you — they'll be added to your print list."
     >
-      <div className="mb-3 flex items-start gap-2 rounded-lg border border-gray-700 bg-gray-800/50 px-3 py-2">
+      <div className="mb-4 flex items-start gap-2 rounded-lg border border-gray-700 bg-gray-800/50 px-3 py-2">
         <Info className="mt-0.5 h-4 w-4 shrink-0 text-gray-400" />
         <p className="text-xs text-gray-400">
           Some mods are only available for specific configurations.
-          Incompatible mods are grayed out.
+          Incompatible mods are hidden. Only one A&D FX shield variant
+          can be active at a time — picking a new one will replace any
+          other.
         </p>
       </div>
 
-      <div className="grid gap-2 sm:grid-cols-2">
-        {COMMUNITY_MODS.map((mod) => {
-          const isCompatible = mod.requiresWhen
-            ? mod.requiresWhen(config)
-            : true;
-          const isSelected = communityMods.includes(mod.id);
+      {fullBuildMods.length > 0 && (
+        <div className="mb-6">
+          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+            A&D FX Shield Variants
+          </h3>
+          <p className="mb-3 text-xs text-gray-500">
+            Full-build redesigns — mutually exclusive.
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {fullBuildMods.map((mod) => (
+              <ModCard key={mod.id} mod={mod} />
+            ))}
+          </div>
+        </div>
+      )}
 
-          return (
-            <button
-              key={mod.id}
-              onClick={() => isCompatible && toggleCommunityMod(mod.id)}
-              disabled={!isCompatible}
-              className={[
-                "rounded-lg border p-3 text-left transition-all",
-                isSelected
-                  ? "border-primary-500 bg-primary-500/10"
-                  : !isCompatible
-                    ? "cursor-not-allowed border-gray-800 opacity-40"
-                    : "border-gray-700 hover:border-gray-600 hover:bg-gray-800/50",
-              ].join(" ")}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <h4
-                    className={[
-                      "text-sm font-medium",
-                      isSelected
-                        ? "text-primary-300"
-                        : "text-gray-200",
-                    ].join(" ")}
-                  >
-                    {mod.name}
-                  </h4>
-                  <p className="mt-0.5 text-[10px] text-gray-500">
-                    by {mod.author}
-                  </p>
-                  <p className="mt-1 text-xs text-gray-400">
-                    {mod.description}
-                  </p>
-                </div>
-                {isSelected && (
-                  <Check className="ml-2 h-4 w-4 shrink-0 text-primary-400" />
-                )}
-              </div>
-            </button>
-          );
-        })}
-      </div>
+      {addonMods.length > 0 && (
+        <div>
+          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+            Add-Ons
+          </h3>
+          <p className="mb-3 text-xs text-gray-500">
+            Individual additions that stack with each other.
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {addonMods.map((mod) => (
+              <ModCard key={mod.id} mod={mod} />
+            ))}
+          </div>
+        </div>
+      )}
     </StepLayout>
   );
 }
