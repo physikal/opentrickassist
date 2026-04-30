@@ -13,8 +13,49 @@ import { HopperHeightStep } from "./steps/HopperHeightStep";
 import { BeltTypeStep } from "./steps/BeltTypeStep";
 import { CommunityModsStep } from "./steps/CommunityModsStep";
 import { ReviewStep } from "./steps/ReviewStep";
+import type { BuildConfig } from "../../types/config";
 
 const TOTAL_STEPS = 10;
+
+function stepCanProceed(
+  step: number,
+  config: BuildConfig,
+): boolean {
+  switch (step) {
+    case 0:
+      return true;
+    case 1:
+      return config.scaleType !== null;
+    case 2:
+      return config.controllerVersion !== null;
+    case 3:
+      return config.flowRate !== null;
+    case 4:
+      return config.servoGate !== null;
+    case 5:
+      return config.volumeReducer !== null;
+    case 6:
+      return config.hopperHeight !== null;
+    case 7:
+      return config.beltType !== null;
+    case 8:
+      return (
+        !config.communityMods.includes("memphis_v2_ad_lid") ||
+        config.memphisV2Display !== null
+      );
+    case 9:
+      return true;
+    default:
+      return false;
+  }
+}
+
+function computeMaxReachableStep(config: BuildConfig): number {
+  for (let i = 0; i < TOTAL_STEPS - 1; i++) {
+    if (!stepCanProceed(i, config)) return i;
+  }
+  return TOTAL_STEPS - 1;
+}
 
 export function WizardPage() {
   const wizardStep = useAppStore((s) => s.wizardStep);
@@ -23,34 +64,10 @@ export function WizardPage() {
   const completeWizard = useAppStore((s) => s.completeWizard);
   const navigate = useNavigate();
 
+  const maxReachableStep = computeMaxReachableStep(config);
+
   function canProceed(): boolean {
-    switch (wizardStep) {
-      case 0:
-        return true;
-      case 1:
-        return config.scaleType !== null;
-      case 2:
-        return config.controllerVersion !== null;
-      case 3:
-        return config.flowRate !== null;
-      case 4:
-        return config.servoGate !== null;
-      case 5:
-        return config.volumeReducer !== null;
-      case 6:
-        return config.hopperHeight !== null;
-      case 7:
-        return config.beltType !== null;
-      case 8:
-        return (
-          !config.communityMods.includes("memphis_v2_ad_lid") ||
-          config.memphisV2Display !== null
-        );
-      case 9:
-        return true;
-      default:
-        return false;
-    }
+    return stepCanProceed(wizardStep, config);
   }
 
   function handleBack() {
@@ -100,7 +117,11 @@ export function WizardPage() {
 
   return (
     <div>
-      <WizardProgress currentStep={wizardStep} />
+      <WizardProgress
+        currentStep={wizardStep}
+        maxReachableStep={maxReachableStep}
+        onStepClick={setWizardStep}
+      />
       {renderStep()}
       <WizardNavigation
         currentStep={wizardStep}
