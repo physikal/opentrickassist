@@ -1,6 +1,6 @@
 import { StepLayout } from "../StepLayout";
 import { useAppStore } from "../../../store";
-import { Edit2 } from "lucide-react";
+import { Edit2, ExternalLink, BookOpen, Wifi, Usb } from "lucide-react";
 
 const SCALE_LABELS: Record<string, string> = {
   ad_fx120i_300i: "A&D FX-120i/300i",
@@ -144,6 +144,69 @@ export function ReviewStep() {
               Edit
             </button>
           </div>
+        </div>
+      </div>
+
+      <div className="mt-6 rounded-lg border border-gray-700 bg-gray-800/50 p-4">
+        <h3 className="text-sm font-medium text-gray-200">
+          After your build: first-run resources
+        </h3>
+        <p className="mt-1 text-xs text-gray-500">
+          Save these for once the trickler is assembled. They cover
+          firmware setup, wireless, and dialing in powder profiles.
+        </p>
+        <div className="mt-3 grid gap-2 sm:grid-cols-3">
+          <a
+            href="https://github.com/eamars/OpenTrickler/blob/main/Manual/tuning_guide.md"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-start gap-2 rounded-md border border-gray-700 bg-gray-900/40 p-2.5 hover:border-primary-500"
+          >
+            <BookOpen className="mt-0.5 h-4 w-4 shrink-0 text-primary-400" />
+            <div className="flex-1">
+              <div className="flex items-center gap-1 text-[11px] font-medium text-gray-200">
+                Powder Profile Tuning
+                <ExternalLink className="h-3 w-3 text-gray-500" />
+              </div>
+              <p className="mt-0.5 text-[10px] text-gray-500">
+                Calibrate flow per powder.
+              </p>
+            </div>
+          </a>
+          <a
+            href="https://github.com/eamars/OpenTrickler-RP2040-Controller/blob/main/manuals/connect_to_wireless.md"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-start gap-2 rounded-md border border-gray-700 bg-gray-900/40 p-2.5 hover:border-primary-500"
+          >
+            <Wifi className="mt-0.5 h-4 w-4 shrink-0 text-primary-400" />
+            <div className="flex-1">
+              <div className="flex items-center gap-1 text-[11px] font-medium text-gray-200">
+                Connect to Wireless
+                <ExternalLink className="h-3 w-3 text-gray-500" />
+              </div>
+              <p className="mt-0.5 text-[10px] text-gray-500">
+                Web UI over Wi-Fi.
+              </p>
+            </div>
+          </a>
+          <a
+            href="https://github.com/eamars/OpenTrickler-RP2040-Controller/blob/main/manuals/firmware_update_via_usb.md"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-start gap-2 rounded-md border border-gray-700 bg-gray-900/40 p-2.5 hover:border-primary-500"
+          >
+            <Usb className="mt-0.5 h-4 w-4 shrink-0 text-primary-400" />
+            <div className="flex-1">
+              <div className="flex items-center gap-1 text-[11px] font-medium text-gray-200">
+                USB Firmware Update
+                <ExternalLink className="h-3 w-3 text-gray-500" />
+              </div>
+              <p className="mt-0.5 text-[10px] text-gray-500">
+                Flash the controller.
+              </p>
+            </div>
+          </a>
         </div>
       </div>
 

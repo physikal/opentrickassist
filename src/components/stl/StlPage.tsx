@@ -4,7 +4,7 @@ import { ConfigSummaryBanner } from "../shared/ConfigSummaryBanner";
 import { StlGroupSection } from "./StlGroupSection";
 import { computeStl } from "../../lib/stl-engine";
 import { downloadStlZip } from "../../lib/stl-download";
-import { Info, Download, Loader2 } from "lucide-react";
+import { Info, Download, Loader2, Lightbulb } from "lucide-react";
 
 export function StlPage() {
   const config = useAppStore((s) => s.config);
@@ -57,6 +57,24 @@ export function StlPage() {
   return (
     <div>
       <ConfigSummaryBanner />
+
+      <div className="mb-3 flex items-start gap-2 rounded-lg border border-amber-700/40 bg-amber-500/5 px-4 py-3">
+        <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
+        <div className="text-xs text-gray-400">
+          <p className="font-medium text-amber-200">
+            Print this first: bearing test piece
+          </p>
+          <p className="mt-1">
+            Print the bearing test piece to dial in your printer&rsquo;s
+            X-Y hole compensation before committing filament to the
+            full build. Look for the{" "}
+            <span className="font-medium text-gray-200">
+              Bearing Test Print
+            </span>{" "}
+            group below.
+          </p>
+        </div>
+      </div>
 
       <div className="mb-4 flex items-start gap-2 rounded-lg border border-gray-700 bg-gray-800/50 px-4 py-3">
         <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary-400" />
