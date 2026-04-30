@@ -10,7 +10,10 @@ export type CommunityModId =
   | "memphis_v2_ad_lid"
   | "crayons82_ad_shield"
   | "dirtbit_rear_body_mod"
+  | "dewey_ad_shield"
   | "dud3z_alt_pan"
+  | "dewey_ball_powder_plate"
+  | "ian99rt_thicker_discharge"
   | "hayamini_controller_case"
   | "hayamini_cable_management"
   | "neopixel_led_mod"
@@ -22,7 +25,8 @@ export type CommunityModId =
   | "4numen_phone_holder"
   | "4numen_jj100b_bumper"
   | "dewey_windowed_front"
-  | "dewey_cup_holster";
+  | "dewey_cup_holster"
+  | "print_tolerance_pack";
 
 export interface BuildConfig {
   scaleType: ScaleType | null;

@@ -2,7 +2,9 @@ import { StepLayout } from "../StepLayout";
 import { useAppStore } from "../../../store";
 import {
   COMMUNITY_MODS,
+  CATEGORY_META,
   type ModDefinition,
+  type ModCategory,
 } from "../../../data/community-mods";
 import type { MemphisV2Display } from "../../../types/config";
 import {
@@ -196,65 +198,57 @@ function ModCard({ mod }: { mod: ModDefinition }) {
   );
 }
 
+const CATEGORY_ORDER: ModCategory[] = [
+  "scale_variant",
+  "powder_handling",
+  "build_options",
+  "accessories",
+];
+
 export function CommunityModsStep() {
   const config = useAppStore((s) => s.config);
   const visibleMods = COMMUNITY_MODS.filter(
     (m) => !m.requiresWhen || m.requiresWhen(config),
   );
 
-  const fullBuildMods = visibleMods.filter(
-    (m) => m.exclusiveGroup === "ad_fx_shield_variant",
-  );
-  const addonMods = visibleMods.filter(
-    (m) => m.exclusiveGroup !== "ad_fx_shield_variant",
-  );
+  const byCategory = new Map<ModCategory, ModDefinition[]>();
+  for (const cat of CATEGORY_ORDER) byCategory.set(cat, []);
+  for (const mod of visibleMods) {
+    byCategory.get(mod.category)?.push(mod);
+  }
 
   return (
     <StepLayout
       title="Community Modifications"
-      description="Optional modifications created by community members. Select any that interest you — they'll be added to your print list."
+      description="Optional modifications grouped by purpose. Select any that interest you — they'll be added to your print list."
     >
       <div className="mb-4 flex items-start gap-2 rounded-lg border border-gray-700 bg-gray-800/50 px-3 py-2">
         <Info className="mt-0.5 h-4 w-4 shrink-0 text-gray-400" />
         <p className="text-xs text-gray-400">
-          Some mods are only available for specific configurations.
-          Incompatible mods are hidden. Only one A&D FX shield variant
-          can be active at a time — picking a new one will replace any
-          other.
+          Mods that don&rsquo;t apply to your current build are hidden.
+          Only one A&D FX Shield Variant can be active — picking a new
+          one replaces any other.
         </p>
       </div>
 
-      {fullBuildMods.length > 0 && (
-        <div className="mb-6">
-          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
-            A&D FX Shield Variants
-          </h3>
-          <p className="mb-3 text-xs text-gray-500">
-            Full-build redesigns — mutually exclusive.
-          </p>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {fullBuildMods.map((mod) => (
-              <ModCard key={mod.id} mod={mod} />
-            ))}
+      {CATEGORY_ORDER.map((category) => {
+        const mods = byCategory.get(category) ?? [];
+        if (mods.length === 0) return null;
+        const meta = CATEGORY_META[category];
+        return (
+          <div key={category} className="mb-6 last:mb-0">
+            <h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-400">
+              {meta.label}
+            </h3>
+            <p className="mb-3 text-xs text-gray-500">{meta.hint}</p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {mods.map((mod) => (
+                <ModCard key={mod.id} mod={mod} />
+              ))}
+            </div>
           </div>
-        </div>
-      )}
-
-      {addonMods.length > 0 && (
-        <div>
-          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
-            Add-Ons
-          </h3>
-          <p className="mb-3 text-xs text-gray-500">
-            Individual additions that stack with each other.
-          </p>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {addonMods.map((mod) => (
-              <ModCard key={mod.id} mod={mod} />
-            ))}
-          </div>
-        </div>
-      )}
+        );
+      })}
     </StepLayout>
   );
 }

@@ -12,6 +12,11 @@ const GG_JJ100B = `${REPO_BASE}/G&G JJ100B housing`;
 const MEMPHIS_V1 = "CommunityContributions/Memphis/V1/STL";
 const MEMPHIS_V2 = "CommunityContributions/Memphis/V2/3MF";
 const DUD3Z = "CommunityContributions/Dud3z";
+const DEWEY_ROOT = "CommunityContributions/Dewey";
+const DEWEY_AD_SHIELD = `${DEWEY_ROOT}/A&D Shield Mods`;
+const DEWEY_FRONT_REDUCER = `${DEWEY_ROOT}/Front Reducer Mods`;
+const DEWEY_REAR_REDUCER = `${DEWEY_ROOT}/Rear Reducer Mods`;
+const IAN99RT = "CommunityContributions/ian99rt";
 
 function isAdFx(config: BuildConfig): boolean {
   return (
@@ -38,6 +43,34 @@ function memphisV2ReplacesCore(config: BuildConfig): boolean {
     config.communityMods.includes("memphis_v2_ad_lid") &&
     isAdFx(config)
   );
+}
+
+function deweyAdShieldActive(config: BuildConfig): boolean {
+  return (
+    config.communityMods.includes("dewey_ad_shield") && isAdFx(config)
+  );
+}
+
+function ian99rtThickerDischargeActive(config: BuildConfig): boolean {
+  return (
+    config.communityMods.includes("ian99rt_thicker_discharge") &&
+    isAdFx(config)
+  );
+}
+
+function deweyWindowedFrontActive(config: BuildConfig): boolean {
+  return config.communityMods.includes("dewey_windowed_front");
+}
+
+function deweyBallPowderActive(config: BuildConfig): boolean {
+  return (
+    config.communityMods.includes("dewey_ball_powder_plate") &&
+    config.volumeReducer === true
+  );
+}
+
+function printTolerancePackActive(config: BuildConfig): boolean {
+  return config.communityMods.includes("print_tolerance_pack");
 }
 
 export const STL_GROUPS: StlGroup[] = [
@@ -227,7 +260,9 @@ export const STL_GROUPS: StlGroup[] = [
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
-          isAdFx(config) && !memphisV1ReplacesAdFxPart(config),
+          isAdFx(config) &&
+          !memphisV1ReplacesAdFxPart(config) &&
+          !deweyAdShieldActive(config),
       },
       {
         id: "ad_trickler_adapter_plate",
@@ -235,7 +270,8 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${AD_FX}/trickler_adapter_plate.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: (config) => isAdFx(config),
+        requiredWhen: (config) =>
+          isAdFx(config) && !deweyAdShieldActive(config),
       },
       {
         id: "ad_scale_base_adapter_ring",
@@ -284,7 +320,8 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${AD_FX}/pan_cover_lid.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: (config) => isAdFx(config),
+        requiredWhen: (config) =>
+          isAdFx(config) && !deweyAdShieldActive(config),
       },
       {
         id: "ad_cup_base_7mm",
@@ -293,7 +330,9 @@ export const STL_GROUPS: StlGroup[] = [
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
-          isAdFx(config) && !memphisV1ReplacesAdFxPart(config),
+          isAdFx(config) &&
+          !memphisV1ReplacesAdFxPart(config) &&
+          !ian99rtThickerDischargeActive(config),
       },
       {
         id: "ad_powder_cup_body",
@@ -318,7 +357,8 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${AD_FX}/front_discharger_mount.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: (config) => isAdFx(config),
+        requiredWhen: (config) =>
+          isAdFx(config) && !ian99rtThickerDischargeActive(config),
       },
       {
         id: "ad_rear_discharge_mount",
@@ -1091,6 +1131,329 @@ export const STL_GROUPS: StlGroup[] = [
         requiredWhen: (config) =>
           isAdFx(config) &&
           config.communityMods.includes("dud3z_alt_pan"),
+      },
+    ],
+  },
+  {
+    id: "dewey_ad_shield",
+    name: "Dewey A&D Shield",
+    description:
+      "Routes servo and motor wires under the adapter plate. Replaces " +
+      "the stock scale shield, adapter plate, and shield-cover lid; adds " +
+      "wire plugs, modded HayaminiNL controller case, and an integrated " +
+      "cup-holster lid.",
+    requiredWhen: (config) => deweyAdShieldActive(config),
+    files: [
+      {
+        id: "dewey_ad_scale_shield",
+        filename: "1_ScaleShield_DeweyMod.stl",
+        repoPath: `${DEWEY_AD_SHIELD}/1_ScaleShield_DeweyMod.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Replaces stock scale_shield. Cutouts on left and right route " +
+          "servo/motor wires. Print with brim recommended.",
+        requiredWhen: (config) => deweyAdShieldActive(config),
+      },
+      {
+        id: "dewey_ad_feeder_plug",
+        filename: "2_FeederPlug_x2.stl",
+        repoPath: `${DEWEY_AD_SHIELD}/2_FeederPlug_x2.stl`,
+        printQuantity: 2,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Fills unused cutouts in the modded scale shield.",
+        requiredWhen: (config) => deweyAdShieldActive(config),
+      },
+      {
+        id: "dewey_ad_adapter_plate",
+        filename: "3b_AdapterPlate_DeweyMod.stl",
+        repoPath: `${DEWEY_AD_SHIELD}/3b_AdapterPlate_DeweyMod.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Replaces stock trickler_adapter_plate. Has servo/motor JST " +
+          "holes only. If you also want dirtbit display mounting holes, " +
+          "use 3a from the upstream folder instead. Print with brim.",
+        requiredWhen: (config) => deweyAdShieldActive(config),
+      },
+      {
+        id: "dewey_ad_motor_wires_plug",
+        filename: "4_MotorWiresPlug_x2.stl",
+        repoPath: `${DEWEY_AD_SHIELD}/4_MotorWiresPlug_x2.stl`,
+        printQuantity: 2,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Optional - small plugs to tuck motor wires closer.",
+        requiredWhen: (config) => deweyAdShieldActive(config),
+      },
+      {
+        id: "dewey_ad_servo_wires_plug",
+        filename: "5_ServoWiresPlug_x2.stl",
+        repoPath: `${DEWEY_AD_SHIELD}/5_ServoWiresPlug_x2.stl`,
+        printQuantity: 2,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Optional - small plugs to tuck servo wires closer.",
+        requiredWhen: (config) =>
+          deweyAdShieldActive(config) && config.servoGate === true,
+      },
+      {
+        id: "dewey_ad_case_body_bottom",
+        filename: "6_CaseV2.xBodyBottom_DeweyMod.stl",
+        repoPath: `${DEWEY_AD_SHIELD}/6_CaseV2.xBodyBottom_DeweyMod.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Modded HayaminiNL controller case bottom (back holes fit JST " +
+          "plugs). Use 2x M3x12 SHCS, 2x M3 nut. Print with mouse ears " +
+          "or brim.",
+        requiredWhen: (config) =>
+          deweyAdShieldActive(config) &&
+          config.controllerVersion === "v2",
+      },
+      {
+        id: "dewey_ad_case_body_top",
+        filename: "7_CaseV2.xBodyTopRecreated_DeweyMod.stl",
+        repoPath: `${DEWEY_AD_SHIELD}/7_CaseV2.xBodyTopRecreated_DeweyMod.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Modded HayaminiNL controller case top (wider serial port). " +
+          "Use 4x M3x30 SHCS, 4x M3 nut. Print with mouse ears or brim.",
+        requiredWhen: (config) =>
+          deweyAdShieldActive(config) &&
+          config.controllerVersion === "v2",
+      },
+      {
+        id: "dewey_ad_case_rear_bracket",
+        filename: "8_CaseV2.RearBracket.stl",
+        repoPath: `${DEWEY_AD_SHIELD}/8_CaseV2.RearBracket.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "HayaminiNL's unmodded rear bracket, copied for convenience. " +
+          "Use 2x M3x10 BHCS.",
+        requiredWhen: (config) =>
+          deweyAdShieldActive(config) &&
+          config.controllerVersion === "v2",
+      },
+      {
+        id: "dewey_ad_lid_cup_holster",
+        filename: "9_Lid_wCupHolster_DeweyMod.stl",
+        repoPath: `${DEWEY_AD_SHIELD}/9_Lid_wCupHolster_DeweyMod.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Replaces pan_cover_lid. Built-in holster securely stores the " +
+          "powder cup in the front shield cover lid.",
+        requiredWhen: (config) => deweyAdShieldActive(config),
+      },
+    ],
+  },
+  {
+    id: "dewey_ball_powder_plate",
+    name: "Ball Powder Rear Bearing Plate",
+    description:
+      "Modified rear bearing plate sized for ball powders (CFE223, " +
+      "H4350, LeverEvolution). Works with V1 and V2 builds.",
+    requiredWhen: (config) => deweyBallPowderActive(config),
+    files: [
+      {
+        id: "dewey_ball_powder_plate_stl",
+        filename: "1_V1.V2.RearBackBallPowder_DeweyMod.stl",
+        repoPath: `${DEWEY_REAR_REDUCER}/1_V1.V2.RearBackBallPowder_DeweyMod.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "60° chamfer with no bearing reliefs. Pair with the V2 " +
+          "volume reducer + rear door if installing in a V1 trickler. " +
+          "Easy to clean with a small blower or paint brush.",
+        requiredWhen: (config) => deweyBallPowderActive(config),
+      },
+    ],
+  },
+  {
+    id: "ian99rt_thicker_discharge",
+    name: "ian99rt Thicker Discharge Plate Bundle",
+    description:
+      "Steeper-angle front discharge plate (+3mm thicker) plus the " +
+      "matching shorter cup base. Replaces stock front_discharger_mount " +
+      "and cup_base_7mm. Both parts must be printed together.",
+    requiredWhen: (config) => ian99rtThickerDischargeActive(config),
+    files: [
+      {
+        id: "ian99rt_thicker_discharge_plate",
+        filename: "Front_Discharge_Plate_+3mm_thicker.3MF",
+        repoPath: `${IAN99RT}/Front_Discharge_Plate_+3mm_thicker.3MF`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Replaces stock front_discharger_mount. Steeper angle reduces " +
+          "powder hanging when the shutter closes (helps with H4350 " +
+          "and similar powders).",
+        requiredWhen: (config) => ian99rtThickerDischargeActive(config),
+      },
+      {
+        id: "ian99rt_shorter_cup_base",
+        filename: "cup_base_3mm_Shorter.3mf",
+        repoPath: `${IAN99RT}/cup_base_3mm_Shorter.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Replaces stock cup_base_7mm. Required to fit under the " +
+          "thicker discharge plate.",
+        requiredWhen: (config) => ian99rtThickerDischargeActive(config),
+      },
+    ],
+  },
+  {
+    id: "plexi_cutting_jigs",
+    name: "Plexi Cutting Jigs (for Windowed Front)",
+    description:
+      "Score-and-snap jigs for cutting the plexiglass window panel by " +
+      "hand. Three sizes — print whichever matches your plexiglass sheet. " +
+      "Final window dimension is 62×38mm.",
+    requiredWhen: (config) => deweyWindowedFrontActive(config),
+    files: [
+      {
+        id: "plexi_jig_62mm",
+        filename: "4b_PlexiJig_62x38mm.stl",
+        repoPath: `${DEWEY_FRONT_REDUCER}/4b_PlexiJig_62x38mm.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Final size jig (62×38mm). The one most builders need.",
+        requiredWhen: (config) => deweyWindowedFrontActive(config),
+      },
+      {
+        id: "plexi_jig_132mm",
+        filename: "4c_PlexiJig_132x38mm.stl",
+        repoPath: `${DEWEY_FRONT_REDUCER}/4c_PlexiJig_132x38mm.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Mid-size jig (132×38mm). Use as a step-down from larger sheets.",
+        requiredWhen: (config) => deweyWindowedFrontActive(config),
+      },
+      {
+        id: "plexi_jig_182mm",
+        filename: "4a_PlexiJig_182x38mm.stl",
+        repoPath: `${DEWEY_FRONT_REDUCER}/4a_PlexiJig_182x38mm.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Largest jig (182×38mm). Skip if your sheet is smaller.",
+        requiredWhen: (config) => deweyWindowedFrontActive(config),
+      },
+    ],
+  },
+  {
+    id: "print_tolerance_pack",
+    name: "Print Tolerance Tuner Pack",
+    description:
+      "Spacers and a wider front cover for builds where stock parts fit " +
+      "too tightly. Print only the size you need after a test fit — you " +
+      "don't need all of them.",
+    requiredWhen: (config) => printTolerancePackActive(config),
+    files: [
+      {
+        id: "tolerance_front_cover_wider",
+        filename: "1_FrontBodyCover_0.6mmWiderGap.stl",
+        repoPath: `${DEWEY_FRONT_REDUCER}/1_FrontBodyCover_0.6mmWiderGap.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Front body cover with a 0.6mm wider gap. Use if your stock " +
+          "cover slides on too tightly.",
+        requiredWhen: (config) => printTolerancePackActive(config),
+      },
+      {
+        id: "tolerance_volume_spacer_02",
+        filename: "3a_FrontVolumeReducerBack_0.2mmSpacer.stl",
+        repoPath: `${DEWEY_FRONT_REDUCER}/3a_FrontVolumeReducerBack_0.2mmSpacer.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Volume reducer bearing plate with 0.2mm added thickness.",
+        requiredWhen: (config) =>
+          printTolerancePackActive(config) &&
+          config.volumeReducer === true,
+      },
+      {
+        id: "tolerance_volume_spacer_04",
+        filename: "3b_FrontVolumeReducerBack_0.4mmSpacer.stl",
+        repoPath: `${DEWEY_FRONT_REDUCER}/3b_FrontVolumeReducerBack_0.4mmSpacer.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Volume reducer bearing plate with 0.4mm added thickness.",
+        requiredWhen: (config) =>
+          printTolerancePackActive(config) &&
+          config.volumeReducer === true,
+      },
+      {
+        id: "tolerance_volume_spacer_06",
+        filename: "3c_FrontVolumeReducerBack_0.6mmSpacer.stl",
+        repoPath: `${DEWEY_FRONT_REDUCER}/3c_FrontVolumeReducerBack_0.6mmSpacer.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Volume reducer bearing plate with 0.6mm added thickness.",
+        requiredWhen: (config) =>
+          printTolerancePackActive(config) &&
+          config.volumeReducer === true,
+      },
+      {
+        id: "tolerance_door_spacer_02",
+        filename: "2a_FrontRearDoor_0.2mm_spacer.stl",
+        repoPath: `${DEWEY_REAR_REDUCER}/2a_FrontRearDoor_0.2mm_spacer.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Front/rear door with 0.2mm spacer for tighter fit.",
+        requiredWhen: (config) => printTolerancePackActive(config),
+      },
+      {
+        id: "tolerance_door_spacer_04",
+        filename: "2b_FrontRearDoor_0.4mm_spacer.stl",
+        repoPath: `${DEWEY_REAR_REDUCER}/2b_FrontRearDoor_0.4mm_spacer.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Front/rear door with 0.4mm spacer for tighter fit.",
+        requiredWhen: (config) => printTolerancePackActive(config),
+      },
+      {
+        id: "tolerance_door_spacer_06",
+        filename: "2c_FrontRearDoor_0.6mm_spacer.stl",
+        repoPath: `${DEWEY_REAR_REDUCER}/2c_FrontRearDoor_0.6mm_spacer.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Front/rear door with 0.6mm spacer for tighter fit.",
+        requiredWhen: (config) => printTolerancePackActive(config),
+      },
+    ],
+  },
+  {
+    id: "bearing_test_print",
+    name: "Bearing Test Print (recommended first print)",
+    description:
+      "Small bearing test piece to dial in your X-Y hole compensation " +
+      "before committing filament to large parts. Print this first.",
+    requiredWhen: () => true,
+    files: [
+      {
+        id: "bearing_test_print_stl",
+        filename: "V2.BodyBearingTest_DeweyMod.stl",
+        repoPath: `${DEWEY_ROOT}/V2.BodyBearingTest_DeweyMod.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Start with zero X-Y hole compensation, then adjust based on " +
+          "how the bearing fits before printing the full body parts.",
+        requiredWhen: () => true,
       },
     ],
   },
