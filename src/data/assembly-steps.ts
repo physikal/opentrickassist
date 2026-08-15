@@ -471,6 +471,202 @@ export const ASSEMBLY_SECTIONS: AssemblySection[] = [
     ],
   },
   {
+    id: "crayons82_assembly",
+    title: "Crayons82 A&D FX Shield Assembly",
+    description:
+      "Assemble the Crayons82 full-build redesign. Follow the Memphis V1 " +
+      "readme for assembly sequence; use Crayons82-specific LED and insert notes.",
+    guideUrl:
+      "https://github.com/eamars/OpenTrickler/blob/main/CommunityContributions/Crayons82/ReadME.md",
+    requiredWhen: (c) =>
+      c.communityMods.includes("crayons82_ad_shield") &&
+      (c.scaleType === "ad_fx120i_300i" ||
+        c.scaleType === "gg_jj223bf"),
+    steps: [
+      {
+        id: "crayons82_heatsets",
+        title: "Install heatset inserts",
+        description:
+          "Press 28x M3x5x4 heatsets into the Crayons82 printed parts per the " +
+          "Memphis V1 assembly locations.",
+      },
+      {
+        id: "crayons82_print_settings",
+        title: "Print with recommended settings",
+        description:
+          "0.16mm layer height, 0.42mm line width, 4–5 top/bottom and wall " +
+          "layers, 25% infill. Prefer STEP files over STL when slicing.",
+      },
+      {
+        id: "crayons82_led_wire",
+        title: "Install LED wire housing and retainers",
+        description:
+          "Insert the LED wire into LED WIRE HOUSING before sliding the front " +
+          "body into place. Fit the LED keeper and wire fasteners. Orient the " +
+          "60° lens with its rectangular back vertical; sand edges lightly if needed.",
+      },
+      {
+        id: "crayons82_inserts",
+        title: "Test-fit trickler tube inserts",
+        description:
+          "Screw each fine-trickler insert (large/medium/small/ultra-fine) into " +
+          "the large fine trickler tube before final install. Fit should be snug.",
+      },
+      {
+        id: "crayons82_assemble",
+        title: "Assemble per Memphis V1 guide",
+        description:
+          "Use the Memphis V1 readme for the overall shield, display, PCB " +
+          "enclosure, and discharge assembly sequence with Crayons82 parts.",
+      },
+    ],
+  },
+  {
+    id: "dirtbit_assembly",
+    title: "dirtbit Rear Body & Display Assembly",
+    description:
+      "Install the dirtbit rear body, Fly Mini display, enclosure, adapter " +
+      "plate, and optional volume inserts.",
+    guideUrl:
+      "https://github.com/eamars/OpenTrickler/blob/main/CommunityContributions/dirtbit/README.md",
+    requiredWhen: (c) =>
+      c.communityMods.includes("dirtbit_rear_body_mod") &&
+      (c.scaleType === "ad_fx120i_300i" ||
+        c.scaleType === "gg_jj223bf"),
+    steps: [
+      {
+        id: "dirtbit_terminal",
+        title: "Prepare expansion board terminal",
+        description:
+          "Rotate the screw terminal on the Pico expansion board 180° and " +
+          "fit an M12 thread socket before installing the enclosure.",
+      },
+      {
+        id: "dirtbit_print_orient",
+        title: "Print with correct orientation",
+        description:
+          "Use support on the build plate only. Follow the upstream " +
+          "print_orientation images for display, enclosure, and rear body.",
+      },
+      {
+        id: "dirtbit_display",
+        title: "Assemble Fly Mini display",
+        description:
+          "Build Display_Assy_body / bracket / front around the Mellow FLY " +
+          "Mini V1.0 12864 display. Mount to the dirtbit rear body.",
+      },
+      {
+        id: "dirtbit_fasten",
+        title: "Fasten with M3 hardware",
+        description:
+          "Use a mix of M3x10 / 12 / 16 / 20 hex screws and M3 nuts to join " +
+          "the rear body, adapter plate, enclosure, and display assembly.",
+      },
+    ],
+  },
+  {
+    id: "ian99rt_gearless_assembly",
+    title: "ian99rt Gearless Shutter Assembly",
+    description:
+      "Install shoulder-bolt / needle-bearing shutters and the matching " +
+      "one-piece windowed front housing.",
+    guideUrl:
+      "https://github.com/eamars/OpenTrickler/blob/main/CommunityContributions/ian99rt/README.txt",
+    requiredWhen: (c) =>
+      c.communityMods.includes("ian99rt_gearless_shutter") &&
+      c.servoGate === true,
+    steps: [
+      {
+        id: "ian99rt_gearless_hardware",
+        title: "Gather pin/slot hardware",
+        description:
+          "2x 3mm shoulder bolts (M2.5 × 16mm), 2x HF0306 needle bearings, " +
+          "and 2x M2.5 hex nuts.",
+      },
+      {
+        id: "ian99rt_gearless_install",
+        title: "Install shutters and arms",
+        description:
+          "Assemble LeftandRight_Shutter_Gearless with Shutter_Arm_R01_X2 using " +
+          "the shoulder-bolt / bearing pin-slot connection. Do not install stock gears.",
+      },
+      {
+        id: "ian99rt_gearless_front",
+        title: "Install windowed front housing",
+        description:
+          "Print the one-piece front body (no supports). Fit a 2×38×63mm acrylic " +
+          "window and mount servos with the included screws.",
+      },
+    ],
+  },
+  {
+    id: "neopixel_led_assembly",
+    title: "eamars Neopixel LED Mod Assembly",
+    description:
+      "Wire and install the Adafruit Neopixel RGBW button PCBs into the " +
+      "replacement discharge mount, volume inserts, front body, and scale shield.",
+    guideUrl:
+      "https://github.com/eamars/OpenTrickler/blob/main/CommunityContributions/eamars/neopixel_led_mod/readme.md",
+    requiredWhen: (c) =>
+      c.communityMods.includes("neopixel_led_mod") &&
+      (c.scaleType === "ad_fx120i_300i" ||
+        c.scaleType === "gg_jj223bf"),
+    steps: [
+      {
+        id: "neopixel_cable_prep",
+        title: "Prepare Neopixel cables",
+        description:
+          "Cut 470mm of 3-lead cable into 220mm and 250mm. Solder per the " +
+          "upstream DIN/DOUT diagram and crimp a 3-pin 2.54mm JST on the 250mm run.",
+      },
+      {
+        id: "neopixel_discharge_install",
+        title: "Install LEDs into printed pockets",
+        description:
+          "Seat the first Neopixel in front_discharger_mount_with_led, then the " +
+          "second in FrontVolumeReductionInsert_Bottom_with_LED. Keep cables flush " +
+          "in the channels.",
+      },
+      {
+        id: "neopixel_route",
+        title: "Route cables and close the shield",
+        description:
+          "Route through front_body_with_shutter_with_led and seat both cables in " +
+          "scale_shield_with_led cutouts. Plug into the PWNOUT port on the controller.",
+      },
+    ],
+  },
+  {
+    id: "hayamini_case_assembly",
+    title: "HayaminiNL Controller Case Assembly",
+    description:
+      "Mount the USB-C controller enclosure to the rear body and optionally " +
+      "install servo cable management.",
+    guideUrl:
+      "https://github.com/eamars/OpenTrickler/blob/main/CommunityContributions/HayaminiNL/README.md",
+    requiredWhen: (c) =>
+      c.communityMods.includes("hayamini_controller_case") ||
+      c.communityMods.includes("hayamini_cable_management"),
+    steps: [
+      {
+        id: "hayamini_case_mount",
+        title: "Assemble and mount controller case",
+        description:
+          "Build the case with 4x M3x30 SHCS and 4x M3 nuts. Press 2x M3x5x4 " +
+          "heatsets into rear_body and mount the bracket with 2x M3x10 BHCS + " +
+          "2x M3x12 SHCS.",
+      },
+      {
+        id: "hayamini_cable_guide",
+        title: "Install servo cable management",
+        description:
+          "With the servo-gate front installed, guide wires through the cable " +
+          "management part and secure with 2x M3x14 SHCS before tightening the " +
+          "rear stepper bracket.",
+      },
+    ],
+  },
+  {
     id: "tuning",
     title: "PID Tuning & Calibration",
     description:

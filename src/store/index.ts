@@ -152,10 +152,13 @@ export const useAppStore = create<AppState>()(
             s.config.communityMods.includes("memphis_v2_ad_lid") &&
             !mods.includes("memphis_v2_ad_lid");
 
+          const neopixelSelected = mods.includes("neopixel_led_mod");
+
           return {
             config: {
               ...s.config,
               communityMods: mods,
+              neopixelLeds: neopixelSelected,
               memphisV1AcrylicHopper:
                 deselectedV1 || replacingV1
                   ? false

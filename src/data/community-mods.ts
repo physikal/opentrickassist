@@ -90,17 +90,16 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     name: "Crayons82 A&D FX Shield",
     author: "Crayons82",
     description:
-      "Alternative full-build redesign: front/rear body, base, PCB enclosure, " +
-      "display, shield, powder pan, shutters, hopper, and trickler tube inserts. " +
-      "Assembly guidance refers to the Memphis V1 readme.",
+      "Full-build redesign: front/rear body, base, PCB enclosure, display, " +
+      "shield with LED retainers and wire fasteners, powder pan, shutters, " +
+      "hopper, and screw-in fine-trickler tube inserts (large/medium/small/" +
+      "ultra-fine). STEP files preferred for print quality. Assembly follows " +
+      "the Memphis V1 readme.",
     docUrl: `${UPSTREAM_BASE}/Crayons82`,
-    impact: "preview",
+    impact: "replaces",
     category: "scale_variant",
     exclusiveGroup: "ad_fx_shield_variant",
     requiresWhen: (c) => isAdFx(c),
-    previewNote:
-      "Parts-list integration coming soon. For now, print and source " +
-      "parts directly from the upstream Crayons82 folder.",
   },
   {
     id: "dirtbit_rear_body_mod",
@@ -108,16 +107,13 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     author: "dirtbit",
     description:
       "Alternative rear body with integrated Fly Mini 12864 display mount, " +
-      "trickler adapter plate, PCB enclosure, and volume reduction inserts " +
-      "designed for easier cleaning.",
+      "trickler adapter plate, PCB enclosure (M12 screw-terminal socket), " +
+      "and volume-reduction inserts designed for easier cleaning.",
     docUrl: `${UPSTREAM_BASE}/dirtbit`,
-    impact: "preview",
+    impact: "replaces",
     category: "scale_variant",
     exclusiveGroup: "ad_fx_shield_variant",
     requiresWhen: (c) => isAdFx(c),
-    previewNote:
-      "Parts-list integration coming soon. For now, print and source " +
-      "parts directly from the upstream dirtbit folder.",
   },
   {
     id: "dewey_ad_shield",
@@ -182,6 +178,7 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     description:
       "Enclosure for the Pico motor expansion board (v2.0/2.1 USB-C). " +
       "Includes mounting bracket for rear motor assembly.",
+    docUrl: `${UPSTREAM_BASE}/HayaminiNL`,
     impact: "additive",
     category: "build_options",
     requiresWhen: (c) => c.controllerVersion === "v2",
@@ -192,6 +189,7 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     author: "HayaminiNL",
     description:
       "Cable management system for servo gate wiring. Keeps wires tidy and out of the way.",
+    docUrl: `${UPSTREAM_BASE}/HayaminiNL`,
     impact: "additive",
     category: "build_options",
     requiresWhen: (c) => c.servoGate === true,
@@ -201,9 +199,13 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     name: "Neopixel LED Status Lights",
     author: "eamars",
     description:
-      "3x RGB Neopixel LEDs for status indication. Shows trickler state visually.",
-    impact: "additive",
+      "Replacement front body, discharge mount, volume inserts, and scale " +
+      "shield with pockets for 2x Adafruit Neopixel RGBW button PCBs. " +
+      "Shows trickler state visually (A&D FX builds).",
+    docUrl: `${UPSTREAM_BASE}/eamars/neopixel_led_mod`,
+    impact: "replaces",
     category: "build_options",
+    requiresWhen: (c) => isAdFx(c),
   },
   {
     id: "dewey_windowed_front",
@@ -211,9 +213,10 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     author: "Dewey",
     description:
       "Front body variant with a window cutout for a plexiglass panel. " +
-      "Lets you see the powder level inside the trickler. Plexi-cutting " +
-      "jigs are auto-included with the print list.",
-    impact: "additive",
+      "Lets you see the powder level inside the trickler. Includes the " +
+      "windowed body STLs and plexi-cutting jigs.",
+    docUrl: `${UPSTREAM_BASE}/Dewey/Front%20Reducer%20Mods`,
+    impact: "replaces",
     category: "build_options",
   },
   {
@@ -221,17 +224,24 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     name: "Cup Holster",
     author: "Dewey",
     description:
-      "Convenient holster to hold the powder cup when not in use on the scale.",
-    impact: "additive",
+      "Front shield cover lid with a built-in holster for the powder cup. " +
+      "Replaces the stock pan_cover_lid.",
+    docUrl: `${UPSTREAM_BASE}/Dewey/A%26D%20Shield%20Mods`,
+    impact: "replaces",
     category: "accessories",
+    requiresWhen: (c) =>
+      isAdFx(c) && !c.communityMods.includes("dewey_ad_shield"),
   },
   {
     id: "ian99rt_gearless_shutter",
     name: "Gearless Shutter",
     author: "ian99rt",
     description:
-      "Alternative shutter design that doesn't use gears. Simplified servo gate mechanism.",
-    impact: "additive",
+      "Shoulder-bolt + needle-bearing pin/slot shutters for fast, wear-" +
+      "resistant servo gate motion. Includes matching shutter arms and an " +
+      "optional one-piece windowed front housing.",
+    docUrl: `${UPSTREAM_BASE}/ian99rt`,
+    impact: "replaces",
     category: "build_options",
     requiresWhen: (c) => c.servoGate === true,
   },
@@ -239,7 +249,9 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     id: "mattyy_p_extended_servo",
     name: "Extended Servo Support",
     author: "mattyy_p",
-    description: "Extended mounting bracket for servo motors.",
+    description:
+      "Extended left/right mounting brackets for servo motors. Print both sides.",
+    docUrl: `${UPSTREAM_BASE}/mattyy_p`,
     impact: "additive",
     category: "build_options",
     requiresWhen: (c) => c.servoGate === true,
@@ -249,7 +261,9 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     name: "Hollow Trickler Tube",
     author: "mattyy_p",
     description:
-      "Alternative hollow trickler tube design for different flow characteristics.",
+      "Two-piece hollow fine trickler tube: vase-mode inner insert plus " +
+      "outer shell for different flow characteristics.",
+    docUrl: `${UPSTREAM_BASE}/mattyy_p`,
     impact: "additive",
     category: "powder_handling",
   },
@@ -273,7 +287,8 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     description:
       "Adapter to use a standard water bottle as a powder hopper. " +
       "High capacity alternative to printed hoppers.",
-    impact: "additive",
+    docUrl: `${UPSTREAM_BASE}/1harrym`,
+    impact: "replaces",
     category: "accessories",
   },
   {
@@ -282,7 +297,8 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     author: "Golmeth",
     description:
       "Adapter for Lee powder bottle to feed directly into the hopper.",
-    impact: "additive",
+    docUrl: `${UPSTREAM_BASE}/Golmeth`,
+    impact: "replaces",
     category: "accessories",
   },
   {
@@ -291,6 +307,7 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     author: "4numen",
     description:
       "Mount for your phone near the trickler. Useful for monitoring the web interface.",
+    docUrl: `${UPSTREAM_BASE}/4numen`,
     impact: "additive",
     category: "accessories",
   },
@@ -299,7 +316,9 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     name: "JJ100B Scale Bumper",
     author: "4numen",
     description:
-      "Protective bumper for the G&G JJ100B scale housing.",
+      "Protective bumper and positioning ring for the G&G JJ100B scale housing. " +
+      "Helps cup placement and protects the scale plate.",
+    docUrl: `${UPSTREAM_BASE}/4numen`,
     impact: "additive",
     category: "build_options",
     requiresWhen: (c) => c.scaleType === "gg_jj100b",
