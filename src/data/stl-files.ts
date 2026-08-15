@@ -17,6 +17,14 @@ const DEWEY_AD_SHIELD = `${DEWEY_ROOT}/A&D Shield Mods`;
 const DEWEY_FRONT_REDUCER = `${DEWEY_ROOT}/Front Reducer Mods`;
 const DEWEY_REAR_REDUCER = `${DEWEY_ROOT}/Rear Reducer Mods`;
 const IAN99RT = "CommunityContributions/ian99rt";
+const CRAYONS82 = "CommunityContributions/Crayons82/STL";
+const DIRTBIT = "CommunityContributions/dirtbit/STL";
+const HAYAMINI = "CommunityContributions/HayaminiNL/STL";
+const MATTYY_P = "CommunityContributions/mattyy_p";
+const HARRYM = "CommunityContributions/1harrym/STL";
+const GOLMETH = "CommunityContributions/Golmeth/STL";
+const NUMEN = "CommunityContributions/4numen/STL";
+const NEOPIXEL = "CommunityContributions/eamars/neopixel_led_mod/STL";
 
 function isAdFx(config: BuildConfig): boolean {
   return (
@@ -51,6 +59,19 @@ function deweyAdShieldActive(config: BuildConfig): boolean {
   );
 }
 
+function crayons82Active(config: BuildConfig): boolean {
+  return (
+    config.communityMods.includes("crayons82_ad_shield") && isAdFx(config)
+  );
+}
+
+function dirtbitActive(config: BuildConfig): boolean {
+  return (
+    config.communityMods.includes("dirtbit_rear_body_mod") &&
+    isAdFx(config)
+  );
+}
+
 function ian99rtThickerDischargeActive(config: BuildConfig): boolean {
   return (
     config.communityMods.includes("ian99rt_thicker_discharge") &&
@@ -58,8 +79,43 @@ function ian99rtThickerDischargeActive(config: BuildConfig): boolean {
   );
 }
 
+function ian99rtGearlessActive(config: BuildConfig): boolean {
+  return (
+    config.communityMods.includes("ian99rt_gearless_shutter") &&
+    config.servoGate === true
+  );
+}
+
 function deweyWindowedFrontActive(config: BuildConfig): boolean {
-  return config.communityMods.includes("dewey_windowed_front");
+  return (
+    config.communityMods.includes("dewey_windowed_front") &&
+    !memphisV2ReplacesCore(config) &&
+    !crayons82Active(config) &&
+    !neopixelModActive(config)
+  );
+}
+
+function deweyCupHolsterActive(config: BuildConfig): boolean {
+  return (
+    config.communityMods.includes("dewey_cup_holster") &&
+    isAdFx(config) &&
+    !deweyAdShieldActive(config) &&
+    !memphisV1ReplacesAdFxPart(config) &&
+    !crayons82Active(config)
+  );
+}
+
+function neopixelModActive(config: BuildConfig): boolean {
+  return (
+    (config.communityMods.includes("neopixel_led_mod") ||
+      config.neopixelLeds === true) &&
+    isAdFx(config) &&
+    !memphisV1ReplacesAdFxPart(config) &&
+    !memphisV2ReplacesCore(config) &&
+    !crayons82Active(config) &&
+    !dirtbitActive(config) &&
+    !deweyAdShieldActive(config)
+  );
 }
 
 function deweyBallPowderActive(config: BuildConfig): boolean {
@@ -71,6 +127,13 @@ function deweyBallPowderActive(config: BuildConfig): boolean {
 
 function printTolerancePackActive(config: BuildConfig): boolean {
   return config.communityMods.includes("print_tolerance_pack");
+}
+
+function hopperAdapterActive(config: BuildConfig): boolean {
+  return (
+    config.communityMods.includes("1harrym_water_bottle_adapter") ||
+    config.communityMods.includes("golmeth_lee_bottle_adapter")
+  );
 }
 
 export const STL_GROUPS: StlGroup[] = [
@@ -86,7 +149,16 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${CORE}/front_body.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: (config) => !memphisV2ReplacesCore(config),
+        requiredWhen: (config) =>
+          !memphisV2ReplacesCore(config) &&
+          !crayons82Active(config) &&
+          !deweyWindowedFrontActive(config) &&
+          !neopixelModActive(config) &&
+          !(
+            ian99rtGearlessActive(config) &&
+            !memphisV2ReplacesCore(config) &&
+            !crayons82Active(config)
+          ),
       },
       {
         id: "front_body_cover",
@@ -94,7 +166,8 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${CORE}/front_body_cover.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: (config) => !memphisV2ReplacesCore(config),
+        requiredWhen: (config) =>
+          !memphisV2ReplacesCore(config) && !crayons82Active(config),
       },
       {
         id: "rear_body",
@@ -104,7 +177,9 @@ export const STL_GROUPS: StlGroup[] = [
         material: "abs_asa_petg",
         requiredWhen: (config) =>
           !memphisV1ReplacesAdFxPart(config) &&
-          !memphisV2ReplacesCore(config),
+          !memphisV2ReplacesCore(config) &&
+          !crayons82Active(config) &&
+          !dirtbitActive(config),
       },
       {
         id: "front_rear_door",
@@ -169,7 +244,9 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${SERVO}/left_servo_hanger.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: (config) => config.servoGate === true,
+        requiredWhen: (config) =>
+          config.servoGate === true &&
+          !config.communityMods.includes("mattyy_p_extended_servo"),
       },
       {
         id: "right_servo_hanger",
@@ -177,7 +254,9 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${SERVO}/right_servo_hanger.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: (config) => config.servoGate === true,
+        requiredWhen: (config) =>
+          config.servoGate === true &&
+          !config.communityMods.includes("mattyy_p_extended_servo"),
       },
       {
         id: "left_shutter",
@@ -185,7 +264,8 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${SERVO}/left_shutter.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: (config) => config.servoGate === true,
+        requiredWhen: (config) =>
+          config.servoGate === true && !ian99rtGearlessActive(config),
       },
       {
         id: "right_shutter",
@@ -193,7 +273,8 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${SERVO}/right_shutter.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: (config) => config.servoGate === true,
+        requiredWhen: (config) =>
+          config.servoGate === true && !ian99rtGearlessActive(config),
       },
       {
         id: "spur_gear",
@@ -201,7 +282,8 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${SERVO}/spur_gear_x2.stl`,
         printQuantity: 2,
         material: "abs_asa_petg",
-        requiredWhen: (config) => config.servoGate === true,
+        requiredWhen: (config) =>
+          config.servoGate === true && !ian99rtGearlessActive(config),
       },
     ],
   },
@@ -262,7 +344,9 @@ export const STL_GROUPS: StlGroup[] = [
         requiredWhen: (config) =>
           isAdFx(config) &&
           !memphisV1ReplacesAdFxPart(config) &&
-          !deweyAdShieldActive(config),
+          !deweyAdShieldActive(config) &&
+          !crayons82Active(config) &&
+          !neopixelModActive(config),
       },
       {
         id: "ad_trickler_adapter_plate",
@@ -271,7 +355,11 @@ export const STL_GROUPS: StlGroup[] = [
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
-          isAdFx(config) && !deweyAdShieldActive(config),
+          isAdFx(config) &&
+          !deweyAdShieldActive(config) &&
+          !dirtbitActive(config) &&
+          !crayons82Active(config) &&
+          !neopixelModActive(config),
       },
       {
         id: "ad_scale_base_adapter_ring",
@@ -280,7 +368,9 @@ export const STL_GROUPS: StlGroup[] = [
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
-          isAdFx(config) && !memphisV1ReplacesAdFxPart(config),
+          isAdFx(config) &&
+          !memphisV1ReplacesAdFxPart(config) &&
+          !crayons82Active(config),
       },
       {
         id: "ad_scale_weighing_pan_adapter",
@@ -321,7 +411,10 @@ export const STL_GROUPS: StlGroup[] = [
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
-          isAdFx(config) && !deweyAdShieldActive(config),
+          isAdFx(config) &&
+          !deweyAdShieldActive(config) &&
+          !deweyCupHolsterActive(config) &&
+          !crayons82Active(config),
       },
       {
         id: "ad_cup_base_7mm",
@@ -332,7 +425,8 @@ export const STL_GROUPS: StlGroup[] = [
         requiredWhen: (config) =>
           isAdFx(config) &&
           !memphisV1ReplacesAdFxPart(config) &&
-          !ian99rtThickerDischargeActive(config),
+          !ian99rtThickerDischargeActive(config) &&
+          !crayons82Active(config),
       },
       {
         id: "ad_powder_cup_body",
@@ -340,7 +434,8 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${AD_FX}/powder_cup_body.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: (config) => isAdFx(config),
+        requiredWhen: (config) =>
+          isAdFx(config) && !crayons82Active(config),
       },
       {
         id: "ad_powder_cup_handle",
@@ -349,7 +444,9 @@ export const STL_GROUPS: StlGroup[] = [
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
-          isAdFx(config) && !memphisV1ReplacesAdFxPart(config),
+          isAdFx(config) &&
+          !memphisV1ReplacesAdFxPart(config) &&
+          !crayons82Active(config),
       },
       {
         id: "ad_front_discharger_mount",
@@ -358,7 +455,10 @@ export const STL_GROUPS: StlGroup[] = [
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
-          isAdFx(config) && !ian99rtThickerDischargeActive(config),
+          isAdFx(config) &&
+          !ian99rtThickerDischargeActive(config) &&
+          !neopixelModActive(config) &&
+          !crayons82Active(config),
       },
       {
         id: "ad_rear_discharge_mount",
@@ -367,7 +467,9 @@ export const STL_GROUPS: StlGroup[] = [
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
-          isAdFx(config) && !memphisV1ReplacesAdFxPart(config),
+          isAdFx(config) &&
+          !memphisV1ReplacesAdFxPart(config) &&
+          !crayons82Active(config),
       },
       {
         id: "ad_rear_discharger_cup",
@@ -376,7 +478,9 @@ export const STL_GROUPS: StlGroup[] = [
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
-          isAdFx(config) && !memphisV1ReplacesAdFxPart(config),
+          isAdFx(config) &&
+          !memphisV1ReplacesAdFxPart(config) &&
+          !crayons82Active(config),
       },
       {
         id: "ad_rear_discharge_cup_ring",
@@ -385,7 +489,9 @@ export const STL_GROUPS: StlGroup[] = [
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
-          isAdFx(config) && !memphisV1ReplacesAdFxPart(config),
+          isAdFx(config) &&
+          !memphisV1ReplacesAdFxPart(config) &&
+          !crayons82Active(config),
       },
       {
         id: "ad_rear_discharger_sliding_door",
@@ -394,7 +500,9 @@ export const STL_GROUPS: StlGroup[] = [
         printQuantity: 1,
         material: "abs_asa_petg",
         requiredWhen: (config) =>
-          isAdFx(config) && !memphisV1ReplacesAdFxPart(config),
+          isAdFx(config) &&
+          !memphisV1ReplacesAdFxPart(config) &&
+          !crayons82Active(config),
       },
     ],
   },
@@ -508,7 +616,10 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${HOPPER}/hopper_base.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: (config) => !memphisV1HopperActive(config),
+        requiredWhen: (config) =>
+          !memphisV1HopperActive(config) &&
+          !hopperAdapterActive(config) &&
+          !crayons82Active(config),
       },
       {
         id: "hopper_body_100mm",
@@ -518,6 +629,8 @@ export const STL_GROUPS: StlGroup[] = [
         material: "abs_asa_petg",
         requiredWhen: (config) =>
           !memphisV1HopperActive(config) &&
+          !hopperAdapterActive(config) &&
+          !crayons82Active(config) &&
           (config.hopperHeight === "100mm" ||
             config.hopperHeight === null),
       },
@@ -529,6 +642,8 @@ export const STL_GROUPS: StlGroup[] = [
         material: "abs_asa_petg",
         requiredWhen: (config) =>
           !memphisV1HopperActive(config) &&
+          !hopperAdapterActive(config) &&
+          !crayons82Active(config) &&
           config.hopperHeight === "150mm",
       },
       {
@@ -539,6 +654,8 @@ export const STL_GROUPS: StlGroup[] = [
         material: "abs_asa_petg",
         requiredWhen: (config) =>
           !memphisV1HopperActive(config) &&
+          !hopperAdapterActive(config) &&
+          !crayons82Active(config) &&
           config.hopperHeight === "200mm",
       },
       {
@@ -548,7 +665,10 @@ export const STL_GROUPS: StlGroup[] = [
         printQuantity: 1,
         material: "abs_asa_petg",
         specialInstructions: "Print in vase mode with 0.8mm wall for best results.",
-        requiredWhen: (config) => !memphisV1HopperActive(config),
+        requiredWhen: (config) =>
+          !memphisV1HopperActive(config) &&
+          !hopperAdapterActive(config) &&
+          !crayons82Active(config),
       },
       {
         id: "rear_body_interface",
@@ -556,7 +676,8 @@ export const STL_GROUPS: StlGroup[] = [
         repoPath: `${HOPPER}/rear_body_interface.stl`,
         printQuantity: 1,
         material: "abs_asa_petg",
-        requiredWhen: () => true,
+        requiredWhen: (config) =>
+          !memphisV2ReplacesCore(config) && !crayons82Active(config),
       },
     ],
   },
@@ -1308,14 +1429,47 @@ export const STL_GROUPS: StlGroup[] = [
     ],
   },
   {
-    id: "plexi_cutting_jigs",
-    name: "Plexi Cutting Jigs (for Windowed Front)",
+    id: "dewey_windowed_front",
+    name: "Dewey Windowed Front Body",
     description:
-      "Score-and-snap jigs for cutting the plexiglass window panel by " +
-      "hand. Three sizes — print whichever matches your plexiglass sheet. " +
-      "Final window dimension is 62×38mm.",
+      "Windowed front body with plexiglass panel cutout, plus score-and-snap " +
+      "cutting jigs. Final window dimension is 62×38mm.",
     requiredWhen: (config) => deweyWindowedFrontActive(config),
     files: [
+      {
+        id: "dewey_windowed_front_servo",
+        filename: "2a_FrontBodyV2.Windowed_DeweyMod.stl",
+        repoPath: `${DEWEY_FRONT_REDUCER}/2a_FrontBodyV2.Windowed_DeweyMod.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Replaces stock front_body when using servo gates. Pair with a " +
+          "2mm plexiglass panel cut to 62×38mm.",
+        requiredWhen: (config) =>
+          deweyWindowedFrontActive(config) &&
+          config.servoGate === true &&
+          !ian99rtGearlessActive(config),
+      },
+      {
+        id: "dewey_windowed_front_no_servo",
+        filename: "2b_FrontBodyV2.WindowedNoServos_DeweyMod.stl",
+        repoPath: `${DEWEY_FRONT_REDUCER}/2b_FrontBodyV2.WindowedNoServos_DeweyMod.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Replaces stock front_body when not using servo gates.",
+        requiredWhen: (config) =>
+          deweyWindowedFrontActive(config) && config.servoGate !== true,
+      },
+      {
+        id: "dewey_window_test_piece",
+        filename: "2c_Window Test Piece_DeweyMod.stl",
+        repoPath: `${DEWEY_FRONT_REDUCER}/2c_Window Test Piece_DeweyMod.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "Optional fit-check piece for the plexiglass window.",
+        requiredWhen: (config) => deweyWindowedFrontActive(config),
+      },
       {
         id: "plexi_jig_62mm",
         filename: "4b_PlexiJig_62x38mm.stl",
@@ -1457,4 +1611,832 @@ export const STL_GROUPS: StlGroup[] = [
       },
     ],
   },
+
+  {
+    id: "crayons82",
+    name: "Crayons82 A&D FX Shield",
+    description:
+      "Full-build Crayons82 redesign. Upstream recommends printing from STEP " +
+      "files when possible for better dimensional accuracy.",
+    requiredWhen: (config) => crayons82Active(config),
+    files: [
+      {
+        id: "crayons82_base",
+        filename: "BASE.stl",
+        repoPath: `${CRAYONS82}/Base/BASE.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_front_body",
+        filename: "FRONT BODY.stl",
+        repoPath: `${CRAYONS82}/Front body components/FRONT BODY.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_cover",
+        filename: "COVER (2).stl",
+        repoPath: `${CRAYONS82}/Front body components/COVER (2).stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_dump_shield",
+        filename: "DUMP SHIELD.stl",
+        repoPath: `${CRAYONS82}/Front body components/DUMP SHIELD.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_front_door",
+        filename: "FRONT DOOR.stl",
+        repoPath: `${CRAYONS82}/Front body components/FRONT DOOR.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_front_door_clear",
+        filename: "FRONT DOOR CLEAR CUTOUT.stl",
+        repoPath: `${CRAYONS82}/Front body components/FRONT DOOR CLEAR CUTOUT.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "Clear-cutout door variant for acrylic window.",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_led_wire_housing",
+        filename: "LED WIRE HOUSING.stl",
+        repoPath: `${CRAYONS82}/Front body components/LED WIRE HOUSING.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Insert the LED wire before sliding the front body into place.",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_shutter_left",
+        filename: "SHUTTER_LEFT GATE.stl",
+        repoPath: `${CRAYONS82}/Front body components/SHUTTER_LEFT GATE.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) =>
+          crayons82Active(config) && config.servoGate === true,
+      },
+      {
+        id: "crayons82_shutter_right",
+        filename: "SHUTTER_RIGHT GATE.stl",
+        repoPath: `${CRAYONS82}/Front body components/SHUTTER_RIGHT GATE.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) =>
+          crayons82Active(config) && config.servoGate === true,
+      },
+      {
+        id: "crayons82_volume_reducer_back",
+        filename: "VOLUME REDUCER BACK.stl",
+        repoPath: `${CRAYONS82}/Front body components/VOLUME REDUCER BACK.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) =>
+          crayons82Active(config) && config.volumeReducer === true,
+      },
+      {
+        id: "crayons82_pcb_rear",
+        filename: "PBC REAR HOUSING.stl",
+        repoPath: `${CRAYONS82}/PCB board components/PBC REAR HOUSING.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "Filename typo (PBC) preserved from upstream.",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_pcb_front",
+        filename: "PCB FRONT COVER (1).stl",
+        repoPath: `${CRAYONS82}/PCB board components/PCB FRONT COVER (1).stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_hopper_funnel",
+        filename: "HOPPER FUNNEL.stl",
+        repoPath: `${CRAYONS82}/Powder hopper components/HOPPER FUNNEL.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_powder_tube_lid",
+        filename: "POWDER TUBE LID.stl",
+        repoPath: `${CRAYONS82}/Powder hopper components/POWDER TUBE LID.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_rear_body_interface",
+        filename: "REAR BODY INTERFACE.stl",
+        repoPath: `${CRAYONS82}/Powder hopper components/REAR BODY INTERFACE.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_coin_weight_adapter",
+        filename: "Coin weight adapter.stl",
+        repoPath: `${CRAYONS82}/Powder pan/Coin weight adapter.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_scale_post",
+        filename: "Scale post.stl",
+        repoPath: `${CRAYONS82}/Powder pan/Scale post.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_weight_pan",
+        filename: "Weight pan.stl",
+        repoPath: `${CRAYONS82}/Powder pan/Weight pan.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_rear_body",
+        filename: "REAR BODY.stl",
+        repoPath: `${CRAYONS82}/Rear body components/REAR BODY.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_rear_vol_back",
+        filename: "REAR VOLUME REDUCER BACK .stl",
+        repoPath: `${CRAYONS82}/Rear body components/REAR VOLUME REDUCER BACK .stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "Trailing space in filename preserved from upstream.",
+        requiredWhen: (config) =>
+          crayons82Active(config) && config.volumeReducer === true,
+      },
+      {
+        id: "crayons82_rear_vol_door",
+        filename: "REAR VOLUME REDUCER DOOR.stl",
+        repoPath: `${CRAYONS82}/Rear body components/REAR VOLUME REDUCER DOOR.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) =>
+          crayons82Active(config) && config.volumeReducer === true,
+      },
+      {
+        id: "crayons82_rear_vol_front",
+        filename: "REAR VOLUME REDUCER FRONT.stl",
+        repoPath: `${CRAYONS82}/Rear body components/REAR VOLUME REDUCER FRONT.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) =>
+          crayons82Active(config) && config.volumeReducer === true,
+      },
+      {
+        id: "crayons82_dump_v77",
+        filename: "OPEN TRICKLER V3 v77.stl",
+        repoPath: `${CRAYONS82}/Rear powder dump components/OPEN TRICKLER V3 v77.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_powder_cup_emptying",
+        filename: "POWDER CUP (EMPTYING).stl",
+        repoPath: `${CRAYONS82}/Rear powder dump components/POWDER CUP (EMPTYING).stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_pull_tab",
+        filename: "PULL TAB.stl",
+        repoPath: `${CRAYONS82}/Rear powder dump components/PULL TAB.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_support_pull_tab",
+        filename: "SUPPORT PULL TAB.stl",
+        repoPath: `${CRAYONS82}/Rear powder dump components/SUPPORT PULL TAB.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_display_front",
+        filename: "DISPLAY FRONT COVER.stl",
+        repoPath: `${CRAYONS82}/Screen display components/DISPLAY FRONT COVER.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_display_rear",
+        filename: "DISPLAY REAR HOUSING.stl",
+        repoPath: `${CRAYONS82}/Screen display components/DISPLAY REAR HOUSING.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_illuminated_knob",
+        filename: "ILLUMINATED KNOB.stl",
+        repoPath: `${CRAYONS82}/Screen display components/ILLUMINATED KNOB.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_display_support",
+        filename: "SUPPORT.stl",
+        repoPath: `${CRAYONS82}/Screen display components/SUPPORT.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_shield",
+        filename: "SHIELD.stl",
+        repoPath: `${CRAYONS82}/Shield/SHIELD.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_fastener",
+        filename: "Fastener.stl",
+        repoPath: `${CRAYONS82}/Shield/Fastener.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "Wire securment fastener for LED wiring.",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_led_keeper",
+        filename: "LED keeper.stl",
+        repoPath: `${CRAYONS82}/Shield/LED keeper.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_insert_large",
+        filename: "LARGE TRICKLER.stl",
+        repoPath: `${CRAYONS82}/trickler tube inserts/LARGE TRICKLER.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Screw-in fine-trickler insert. Test-fit before installing the tube.",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_insert_medium",
+        filename: "MEDIUM.stl",
+        repoPath: `${CRAYONS82}/trickler tube inserts/MEDIUM.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_insert_seal",
+        filename: "SEAL.stl",
+        repoPath: `${CRAYONS82}/trickler tube inserts/SEAL.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_insert_small",
+        filename: "SMALL.stl",
+        repoPath: `${CRAYONS82}/trickler tube inserts/SMALL.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_insert_tool",
+        filename: "TOOL.stl",
+        repoPath: `${CRAYONS82}/trickler tube inserts/TOOL.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_insert_ultra_fine",
+        filename: "ULTRA FINE.stl",
+        repoPath: `${CRAYONS82}/trickler tube inserts/ULTRA FINE.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+    ],
+  },
+  {
+    id: "dirtbit",
+    name: "dirtbit Rear Body & Display",
+    description:
+      "Fly Mini 12864 display assembly, rear body, PCB enclosure, adapter " +
+      "plate, and easy-clean volume reduction inserts.",
+    requiredWhen: (config) => dirtbitActive(config),
+    files: [
+      {
+        id: "dirtbit_display_body",
+        filename: "Display_Assy_body.stl",
+        repoPath: `${DIRTBIT}/Display_Assy_body.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "For Mellow FLY Mini V1.0 12864 display. Print with support on " +
+          "build plate only — see upstream orientation images.",
+        requiredWhen: (config) => dirtbitActive(config),
+      },
+      {
+        id: "dirtbit_display_bracket",
+        filename: "Display_Assy_bracket.stl",
+        repoPath: `${DIRTBIT}/Display_Assy_bracket.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => dirtbitActive(config),
+      },
+      {
+        id: "dirtbit_display_front",
+        filename: "Display_Assy_front.stl",
+        repoPath: `${DIRTBIT}/Display_Assy_front.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => dirtbitActive(config),
+      },
+      {
+        id: "dirtbit_rear_body",
+        filename: "OpenTrickler_RearBody.stl",
+        repoPath: `${DIRTBIT}/OpenTrickler_RearBody.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "Replaces stock rear_body.",
+        requiredWhen: (config) => dirtbitActive(config),
+      },
+      {
+        id: "dirtbit_enclosure_bottom",
+        filename: "enclosure_bottom.stl",
+        repoPath: `${DIRTBIT}/enclosure_bottom.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Rotate the expansion-board screw terminal 180° and use an M12 " +
+          "thread socket. See upstream screw_terminal.png.",
+        requiredWhen: (config) => dirtbitActive(config),
+      },
+      {
+        id: "dirtbit_enclosure_top",
+        filename: "enclosure_top.stl",
+        repoPath: `${DIRTBIT}/enclosure_top.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => dirtbitActive(config),
+      },
+      {
+        id: "dirtbit_adapter_plate",
+        filename: "trickler_adapter_plate.stl",
+        repoPath: `${DIRTBIT}/trickler_adapter_plate.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "Replaces stock trickler_adapter_plate.",
+        requiredWhen: (config) => dirtbitActive(config),
+      },
+      {
+        id: "dirtbit_vol_front_body",
+        filename: "VolumeReductionInsert_front_body.stl",
+        repoPath: `${DIRTBIT}/VolumeReductionInsert_front_body.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) =>
+          dirtbitActive(config) && config.volumeReducer === true,
+      },
+      {
+        id: "dirtbit_vol_front_cover",
+        filename: "VolumeReductionInsert_front_cover.stl",
+        repoPath: `${DIRTBIT}/VolumeReductionInsert_front_cover.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) =>
+          dirtbitActive(config) && config.volumeReducer === true,
+      },
+      {
+        id: "dirtbit_vol_rear_body",
+        filename: "VolumeReductionInsert_rear_body.stl",
+        repoPath: `${DIRTBIT}/VolumeReductionInsert_rear_body.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) =>
+          dirtbitActive(config) && config.volumeReducer === true,
+      },
+      {
+        id: "dirtbit_vol_rear_top",
+        filename: "VolumeReductionInsert_rear_top.stl",
+        repoPath: `${DIRTBIT}/VolumeReductionInsert_rear_top.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) =>
+          dirtbitActive(config) && config.volumeReducer === true,
+      },
+    ],
+  },
+  {
+    id: "ian99rt_gearless_shutter",
+    name: "ian99rt Gearless Shutter",
+    description:
+      "Shoulder-bolt / needle-bearing shutters and matching arms. Optional " +
+      "one-piece windowed front housing for gearless builds.",
+    requiredWhen: (config) => ian99rtGearlessActive(config),
+    files: [
+      {
+        id: "ian99rt_gearless_shutters",
+        filename: "LeftandRight_Shutter_Gearless.3mf",
+        repoPath: `${IAN99RT}/LeftandRight_Shutter_Gearless.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Replaces stock left/right shutters and spur gears. Uses 2x " +
+          "3mm shoulder bolts (M2.5 × 16mm) and 2x HF0306 needle bearings.",
+        requiredWhen: (config) => ian99rtGearlessActive(config),
+      },
+      {
+        id: "ian99rt_shutter_arms",
+        filename: "Shutter_Arm_R01_X2.3mf",
+        repoPath: `${IAN99RT}/Shutter_Arm_R01_X2.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => ian99rtGearlessActive(config),
+      },
+      {
+        id: "ian99rt_gearless_windowed_front",
+        filename: "front_body_1pc_for_SquareWindow_and_GearlessShutter_R03.3mf",
+        repoPath: `${IAN99RT}/front_body_1pc_for_SquareWindow_and_GearlessShutter_R03.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "One-piece front housing for gearless shutter + 2×38×63mm acrylic " +
+          "window. Printable without supports. Uses included servo screws.",
+        requiredWhen: (config) =>
+          ian99rtGearlessActive(config) &&
+          !memphisV2ReplacesCore(config) &&
+          !crayons82Active(config),
+      },
+      {
+        id: "ian99rt_dirtbit_screen_bracket",
+        filename: "LeftSide_Screen_Bracket_for_dirtBit_Screen_Housing.3mf",
+        repoPath: `${IAN99RT}/LeftSide_Screen_Bracket_for_dirtBit_Screen_Housing.3mf`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Optional left-side screen bracket for dirtbit display housing.",
+        requiredWhen: (config) =>
+          ian99rtGearlessActive(config) && dirtbitActive(config),
+      },
+    ],
+  },
+  {
+    id: "neopixel_led_mod",
+    name: "eamars Neopixel LED Mod",
+    description:
+      "Replacement parts with Neopixel pockets for A&D FX builds. Based on " +
+      "OpenTrickler v2.0.1; see upstream readme for cable prep.",
+    requiredWhen: (config) => neopixelModActive(config),
+    files: [
+      {
+        id: "neopixel_front_body",
+        filename: "front_body_with_shutter_with_led.stl",
+        repoPath: `${NEOPIXEL}/front_body_with_shutter_with_led.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "Replaces stock front_body. Route LED cables per upstream guide.",
+        requiredWhen: (config) => neopixelModActive(config),
+      },
+      {
+        id: "neopixel_front_discharger",
+        filename: "front_discharger_mount_with_led.stl",
+        repoPath: `${NEOPIXEL}/front_discharger_mount_with_led.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Replaces stock front_discharger_mount. Install first Neopixel here.",
+        requiredWhen: (config) => neopixelModActive(config),
+      },
+      {
+        id: "neopixel_scale_shield",
+        filename: "scale_shield_with_led.stl",
+        repoPath: `${NEOPIXEL}/scale_shield_with_led.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "Replaces stock scale_shield. Cable cutouts for LED wiring.",
+        requiredWhen: (config) => neopixelModActive(config),
+      },
+      {
+        id: "neopixel_adapter_plate",
+        filename: "trickler_adapter_plate.stl",
+        repoPath: `${NEOPIXEL}/trickler_adapter_plate.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) => neopixelModActive(config),
+      },
+      {
+        id: "neopixel_vol_bottom",
+        filename: "FrontVolumeReductionInsert_Bottom_with_LED.stl",
+        repoPath: `${NEOPIXEL}/FrontVolumeReductionInsert_Bottom_with_LED.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) =>
+          neopixelModActive(config) && config.volumeReducer === true,
+      },
+      {
+        id: "neopixel_vol_top",
+        filename: "FrontVolumeReductionInsert_Top_with_LED.stl.stl",
+        repoPath: `${NEOPIXEL}/FrontVolumeReductionInsert_Top_with_LED.stl.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "Double .stl extension preserved from upstream.",
+        requiredWhen: (config) =>
+          neopixelModActive(config) && config.volumeReducer === true,
+      },
+    ],
+  },
+  {
+    id: "dewey_cup_holster",
+    name: "Dewey Cup Holster Lid",
+    description:
+      "Front shield cover lid with integrated powder-cup holster.",
+    requiredWhen: (config) => deweyCupHolsterActive(config),
+    files: [
+      {
+        id: "dewey_cup_holster_lid",
+        filename: "9_Lid_wCupHolster_DeweyMod.stl",
+        repoPath: `${DEWEY_AD_SHIELD}/9_Lid_wCupHolster_DeweyMod.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "Replaces stock pan_cover_lid.",
+        requiredWhen: (config) => deweyCupHolsterActive(config),
+      },
+    ],
+  },
+  {
+    id: "hayamini_controller_case",
+    name: "HayaminiNL Controller Case",
+    description:
+      "USB-C controller board enclosure and rear mounting bracket.",
+    requiredWhen: (config) =>
+      config.communityMods.includes("hayamini_controller_case") &&
+      config.controllerVersion === "v2" &&
+      !deweyAdShieldActive(config),
+    files: [
+      {
+        id: "hayamini_case_bottom",
+        filename: "OpenTrickler controllerboard v2.x case v12 - Case body bottom.stl",
+        repoPath: `${HAYAMINI}/OpenTrickler controllerboard v2.x case v12 - Case body bottom.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "Needs 4x M3x30 SHCS and 4x M3 nuts.",
+        requiredWhen: (config) =>
+          config.communityMods.includes("hayamini_controller_case") &&
+          config.controllerVersion === "v2" &&
+          !deweyAdShieldActive(config),
+      },
+      {
+        id: "hayamini_case_top",
+        filename: "OpenTrickler controllerboard v2.x case v12 - Case body top.stl",
+        repoPath: `${HAYAMINI}/OpenTrickler controllerboard v2.x case v12 - Case body top.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) =>
+          config.communityMods.includes("hayamini_controller_case") &&
+          config.controllerVersion === "v2" &&
+          !deweyAdShieldActive(config),
+      },
+      {
+        id: "hayamini_case_bracket",
+        filename: "OpenTrickler controllerboard v2.x case v12 - Case rear bracket.stl",
+        repoPath: `${HAYAMINI}/OpenTrickler controllerboard v2.x case v12 - Case rear bracket.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "2x BHCS M3x10, 2x SHCS M3x12, 2x M3 nut, 2x M3x5x4 heatset into rear_body.",
+        requiredWhen: (config) =>
+          config.communityMods.includes("hayamini_controller_case") &&
+          config.controllerVersion === "v2" &&
+          !deweyAdShieldActive(config),
+      },
+    ],
+  },
+  {
+    id: "hayamini_cable_management",
+    name: "HayaminiNL Servo Cable Management",
+    description: "Guides servo-gate wires clear of belts and tubes.",
+    requiredWhen: (config) =>
+      config.communityMods.includes("hayamini_cable_management") &&
+      config.servoGate === true,
+    files: [
+      {
+        id: "hayamini_cable_mgmt",
+        filename: "OpenTrickler Servogate enhancement - Cable management Servogate.stl",
+        repoPath: `${HAYAMINI}/OpenTrickler Servogate enhancement - Cable management Servogate.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "Secure with 2x M3x14 SHCS.",
+        requiredWhen: (config) =>
+          config.communityMods.includes("hayamini_cable_management") &&
+          config.servoGate === true,
+      },
+    ],
+  },
+  {
+    id: "mattyy_p_extended_servo",
+    name: "mattyy_p Extended Servo Support",
+    description: "Left and right extended servo mounts — not interchangeable.",
+    requiredWhen: (config) =>
+      config.communityMods.includes("mattyy_p_extended_servo") &&
+      config.servoGate === true,
+    files: [
+      {
+        id: "mattyy_servo_left",
+        filename: "Extended Servo Support Left.stl",
+        repoPath: `${MATTYY_P}/Extended Servo Support Left.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) =>
+          config.communityMods.includes("mattyy_p_extended_servo") &&
+          config.servoGate === true,
+      },
+      {
+        id: "mattyy_servo_right",
+        filename: "Extended Servo Support Right.stl",
+        repoPath: `${MATTYY_P}/Extended Servo Support Right.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) =>
+          config.communityMods.includes("mattyy_p_extended_servo") &&
+          config.servoGate === true,
+      },
+    ],
+  },
+  {
+    id: "mattyy_p_hollow_tube",
+    name: "mattyy_p Hollow Trickler Tube",
+    description:
+      "Two-piece fine trickler tube: vase-mode insert + outer shell.",
+    requiredWhen: (config) =>
+      config.communityMods.includes("mattyy_p_hollow_tube"),
+    files: [
+      {
+        id: "mattyy_hollow_outer",
+        filename: "Small Trickler Tube Hollow.stl",
+        repoPath: `${MATTYY_P}/Small Trickler Tube Hollow.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) =>
+          config.communityMods.includes("mattyy_p_hollow_tube"),
+      },
+      {
+        id: "mattyy_hollow_insert",
+        filename: "Small Trickler Tube Vase Mode Insert.stl",
+        repoPath: `${MATTYY_P}/Small Trickler Tube Vase Mode Insert.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Print in vase mode (brim if needed). Glue into the hollow outer shell.",
+        requiredWhen: (config) =>
+          config.communityMods.includes("mattyy_p_hollow_tube"),
+      },
+    ],
+  },
+  {
+    id: "1harrym_water_bottle_adapter",
+    name: "1harrym Water Bottle Hopper Adapter",
+    description: "Threaded hopper-base replacement for a standard water bottle.",
+    requiredWhen: (config) =>
+      config.communityMods.includes("1harrym_water_bottle_adapter"),
+    files: [
+      {
+        id: "harrym_water_bottle",
+        filename: "OpenTrickler_Waterbootle_Adapter.stl",
+        repoPath: `${HARRYM}/OpenTrickler_Waterbootle_Adapter.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Filename typo (Waterbootle) preserved from upstream. Replaces hopper base/body/cap.",
+        requiredWhen: (config) =>
+          config.communityMods.includes("1harrym_water_bottle_adapter"),
+      },
+    ],
+  },
+  {
+    id: "golmeth_lee_bottle_adapter",
+    name: "Golmeth Lee Bottle Adapter",
+    description: "Hopper-base replacement for a Lee powder bottle.",
+    requiredWhen: (config) =>
+      config.communityMods.includes("golmeth_lee_bottle_adapter"),
+    files: [
+      {
+        id: "golmeth_lee_adapter",
+        filename: "LEE-adapter2-final.stl",
+        repoPath: `${GOLMETH}/LEE-adapter2-final.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "Replaces hopper base/body/cap.",
+        requiredWhen: (config) =>
+          config.communityMods.includes("golmeth_lee_bottle_adapter"),
+      },
+    ],
+  },
+  {
+    id: "4numen_phone_holder",
+    name: "4numen Phone Holder",
+    description: "Phone mount near the trickler for monitoring the web UI.",
+    requiredWhen: (config) =>
+      config.communityMods.includes("4numen_phone_holder"),
+    files: [
+      {
+        id: "numen_phone_holder",
+        filename: "Phone_holder.stl",
+        repoPath: `${NUMEN}/Phone_holder.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "Prints without supports.",
+        requiredWhen: (config) =>
+          config.communityMods.includes("4numen_phone_holder"),
+      },
+    ],
+  },
+  {
+    id: "4numen_jj100b_bumper",
+    name: "4numen JJ100B Bumper Pack",
+    description:
+      "Bumper, positioning ring, and related JJ100B scale-plate helpers.",
+    requiredWhen: (config) =>
+      config.communityMods.includes("4numen_jj100b_bumper") &&
+      config.scaleType === "gg_jj100b",
+    files: [
+      {
+        id: "numen_bumper",
+        filename: "JJ100B_Bumper.stl",
+        repoPath: `${NUMEN}/JJ100B_Bumper.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Attach ring base to bumper with 1x M3 10mm tapered screw.",
+        requiredWhen: (config) =>
+          config.communityMods.includes("4numen_jj100b_bumper") &&
+          config.scaleType === "gg_jj100b",
+      },
+      {
+        id: "numen_positioning_ring",
+        filename: "JJ100B_PossitioningRing.stl",
+        repoPath: `${NUMEN}/JJ100B_PossitioningRing.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions: "Filename typo preserved from upstream.",
+        requiredWhen: (config) =>
+          config.communityMods.includes("4numen_jj100b_bumper") &&
+          config.scaleType === "gg_jj100b",
+      },
+      {
+        id: "numen_ring_bumper_base",
+        filename: "JJ100B_RingWithBumperBase.stl",
+        repoPath: `${NUMEN}/JJ100B_RingWithBumperBase.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        requiredWhen: (config) =>
+          config.communityMods.includes("4numen_jj100b_bumper") &&
+          config.scaleType === "gg_jj100b",
+      },
+      {
+        id: "numen_scales_plate",
+        filename: "JJ100B_ScalesPlate.stl",
+        repoPath: `${NUMEN}/JJ100B_ScalesPlate.stl`,
+        printQuantity: 1,
+        material: "abs_asa_petg",
+        specialInstructions:
+          "Press-on positioning ring plate. Scale X/Y ±0.01% if the ring is tight.",
+        requiredWhen: (config) =>
+          config.communityMods.includes("4numen_jj100b_bumper") &&
+          config.scaleType === "gg_jj100b",
+      },
+    ],
+  },
 ];
+

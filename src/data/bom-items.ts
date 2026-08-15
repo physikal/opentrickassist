@@ -28,6 +28,33 @@ function dud3zAltPanActive(config: BuildConfig): boolean {
   );
 }
 
+function crayons82Active(config: BuildConfig): boolean {
+  return (
+    config.communityMods.includes("crayons82_ad_shield") && isAdFx(config)
+  );
+}
+
+function dirtbitActive(config: BuildConfig): boolean {
+  return (
+    config.communityMods.includes("dirtbit_rear_body_mod") &&
+    isAdFx(config)
+  );
+}
+
+function ian99rtGearlessActive(config: BuildConfig): boolean {
+  return (
+    config.communityMods.includes("ian99rt_gearless_shutter") &&
+    config.servoGate === true
+  );
+}
+
+function neopixelModActive(config: BuildConfig): boolean {
+  return (
+    config.communityMods.includes("neopixel_led_mod") ||
+    config.neopixelLeds === true
+  );
+}
+
 export const BOM_CATEGORIES: BomCategory[] = [
   {
     id: "core_electronics",
@@ -629,7 +656,43 @@ export const BOM_CATEGORIES: BomCategory[] = [
         unit: "pcs",
         sourcingLinks: [],
         notes: "For status indication lighting on the trickler body.",
-        requiredWhen: (config) => config.neopixelLeds === true,
+        requiredWhen: (config) =>
+          neopixelModActive(config) && !memphisV2Active(config),
+      },
+      {
+        id: "neopixel_adafruit_buttons",
+        name: "Neopixel RGBW Button PCB",
+        specification: "Adafruit #4776 (or equivalent)",
+        quantity: 2,
+        unit: "pcs",
+        sourcingLinks: [
+          {
+            vendor: "Adafruit",
+            url: "https://www.adafruit.com/product/4776",
+            verified: true,
+          },
+        ],
+        notes:
+          "Required for the eamars Neopixel LED mod (2x button PCBs).",
+        requiredWhen: (config) =>
+          config.communityMods.includes("neopixel_led_mod") &&
+          isAdFx(config) &&
+          !memphisV1Active(config) &&
+          !memphisV2Active(config),
+      },
+      {
+        id: "neopixel_3lead_cable",
+        name: "3-Lead Cable (AWG24-26)",
+        specification: "470mm total, cut into 220mm + 250mm runs",
+        quantity: 1,
+        unit: "set",
+        sourcingLinks: [],
+        notes: "For eamars Neopixel LED mod cable prep.",
+        requiredWhen: (config) =>
+          config.communityMods.includes("neopixel_led_mod") &&
+          isAdFx(config) &&
+          !memphisV1Active(config) &&
+          !memphisV2Active(config),
       },
     ],
   },
@@ -925,6 +988,266 @@ export const BOM_CATEGORIES: BomCategory[] = [
         notes:
           "Secures the alternative pan to the scale_weighing_pan_adapter.",
         requiredWhen: (config) => dud3zAltPanActive(config),
+      },
+    ],
+  },
+  {
+    id: "crayons82",
+    name: "Crayons82 A&D FX Shield - Parts & Fasteners",
+    items: [
+      {
+        id: "crayons82_heatsets",
+        name: "Heatset Inserts",
+        specification: "M3x5x4mm",
+        quantity: 28,
+        unit: "pcs",
+        sourcingLinks: [],
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_m3x6_bhcs",
+        name: "M3x6 BHCS",
+        specification: "M3x6mm Button Head Cap Screw",
+        quantity: 4,
+        unit: "pcs",
+        sourcingLinks: [],
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_m3x10_bhcs",
+        name: "M3x10 BHCS",
+        specification: "M3x10mm Button Head Cap Screw",
+        quantity: 16,
+        unit: "pcs",
+        sourcingLinks: [],
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_m3x10_shcs",
+        name: "M3x10 SHCS",
+        specification: "M3x10mm Socket Head Cap Screw",
+        quantity: 4,
+        unit: "pcs",
+        sourcingLinks: [],
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_m3x12_shcs",
+        name: "M3x12 SHCS",
+        specification: "M3x12mm Socket Head Cap Screw",
+        quantity: 4,
+        unit: "pcs",
+        sourcingLinks: [],
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_ws2812b",
+        name: "WS2812B LED Module",
+        specification: "WS2812B LED module (see Crayons82 readme link)",
+        quantity: 1,
+        unit: "pcs",
+        sourcingLinks: [
+          {
+            vendor: "AliExpress",
+            url: "https://www.aliexpress.us/item/3256804431200048.html",
+            verified: false,
+          },
+        ],
+        notes: "Use the LED specified in the Crayons82 upstream readme.",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+      {
+        id: "crayons82_led_lens",
+        name: "60° LED Lens",
+        specification: "60 degree lens; rectangular back oriented vertically",
+        quantity: 1,
+        unit: "pcs",
+        sourcingLinks: [
+          {
+            vendor: "AliExpress",
+            url: "https://www.aliexpress.us/item/3256810066508191.html",
+            verified: false,
+          },
+        ],
+        notes:
+          "May need light edge sanding. Orient the rectangular back vertically.",
+        requiredWhen: (config) => crayons82Active(config),
+      },
+    ],
+  },
+  {
+    id: "dirtbit",
+    name: "dirtbit Rear Body & Display - Parts",
+    items: [
+      {
+        id: "dirtbit_fly_display",
+        name: "Mellow FLY Mini V1.0 12864 Display",
+        specification: "FLY Mini 12864",
+        quantity: 1,
+        unit: "pcs",
+        sourcingLinks: [],
+        notes: "Required display for the dirtbit display assembly.",
+        requiredWhen: (config) => dirtbitActive(config),
+      },
+      {
+        id: "dirtbit_m3_screws",
+        name: "M3 Hex Screws (assorted)",
+        specification: "M3x10 / 12 / 16 / 20 hex screws + M3 nuts",
+        quantity: 1,
+        unit: "handful",
+        sourcingLinks: [],
+        notes: "Upstream does not list exact counts — bring a mixed pack.",
+        requiredWhen: (config) => dirtbitActive(config),
+      },
+      {
+        id: "dirtbit_m12_socket",
+        name: "M12 Thread Socket",
+        specification: "Socket with M12 thread for enclosure",
+        quantity: 1,
+        unit: "pcs",
+        sourcingLinks: [],
+        notes:
+          "Required with the dirtbit enclosure. Rotate the expansion-board " +
+          "screw terminal 180° before install.",
+        requiredWhen: (config) => dirtbitActive(config),
+      },
+    ],
+  },
+  {
+    id: "ian99rt_gearless",
+    name: "ian99rt Gearless Shutter - Hardware",
+    items: [
+      {
+        id: "ian99rt_shoulder_bolts",
+        name: "3mm Shoulder Bolts",
+        specification: "M2.5, 16mm long shoulder bolts",
+        quantity: 2,
+        unit: "pcs",
+        sourcingLinks: [
+          {
+            vendor: "Amazon",
+            url: "https://www.amazon.com/dp/B0D31WBFV2",
+            verified: false,
+          },
+        ],
+        requiredWhen: (config) => ian99rtGearlessActive(config),
+      },
+      {
+        id: "ian99rt_needle_bearings",
+        name: "HF0306 Needle Roller Bearings",
+        specification: "3mm x 6.5mm x 6mm",
+        quantity: 2,
+        unit: "pcs",
+        sourcingLinks: [
+          {
+            vendor: "Amazon",
+            url: "https://www.amazon.com/dp/B0DJ77X8SZ",
+            verified: false,
+          },
+        ],
+        requiredWhen: (config) => ian99rtGearlessActive(config),
+      },
+      {
+        id: "ian99rt_m25_nuts",
+        name: "M2.5 Hex Nuts",
+        specification: "M2.5 hex nut",
+        quantity: 2,
+        unit: "pcs",
+        sourcingLinks: [
+          {
+            vendor: "Amazon",
+            url: "https://www.amazon.com/dp/B07H3WGLJN",
+            verified: false,
+          },
+        ],
+        requiredWhen: (config) => ian99rtGearlessActive(config),
+      },
+      {
+        id: "ian99rt_acrylic_window",
+        name: "Acrylic Window Panel",
+        specification: "2mm x 38mm x 63mm acrylic",
+        quantity: 1,
+        unit: "pcs",
+        sourcingLinks: [
+          {
+            vendor: "Amazon",
+            url: "https://www.amazon.com/dp/B0CZHL7RZK",
+            verified: false,
+          },
+        ],
+        notes: "For the one-piece gearless windowed front housing.",
+        requiredWhen: (config) => ian99rtGearlessActive(config),
+      },
+    ],
+  },
+  {
+    id: "hayamini_hardware",
+    name: "HayaminiNL Controller Case - Fasteners",
+    items: [
+      {
+        id: "hayamini_m3x30",
+        name: "M3x30 SHCS",
+        specification: "M3x30mm Socket Head Cap Screw",
+        quantity: 4,
+        unit: "pcs",
+        sourcingLinks: [],
+        notes: "Controller case assembly.",
+        requiredWhen: (config) =>
+          config.communityMods.includes("hayamini_controller_case") &&
+          config.controllerVersion === "v2",
+      },
+      {
+        id: "hayamini_m3_nuts_case",
+        name: "M3 Nuts (case)",
+        specification: "Standard M3 hex nut",
+        quantity: 6,
+        unit: "pcs",
+        sourcingLinks: [],
+        notes: "4x case body + 2x rear bracket.",
+        requiredWhen: (config) =>
+          config.communityMods.includes("hayamini_controller_case") &&
+          config.controllerVersion === "v2",
+      },
+      {
+        id: "hayamini_bracket_screws",
+        name: "Bracket Fasteners",
+        specification: "2x M3x10 BHCS, 2x M3x12 SHCS, 2x M3x5x4 heatset",
+        quantity: 1,
+        unit: "set",
+        sourcingLinks: [],
+        notes: "Rear bracket to rear_body mount.",
+        requiredWhen: (config) =>
+          config.communityMods.includes("hayamini_controller_case") &&
+          config.controllerVersion === "v2",
+      },
+      {
+        id: "hayamini_cable_m3x14",
+        name: "M3x14 SHCS (cable management)",
+        specification: "M3x14mm Socket Head Cap Screw",
+        quantity: 2,
+        unit: "pcs",
+        sourcingLinks: [],
+        requiredWhen: (config) =>
+          config.communityMods.includes("hayamini_cable_management") &&
+          config.servoGate === true,
+      },
+    ],
+  },
+  {
+    id: "4numen_jj100b_hardware",
+    name: "4numen JJ100B Bumper - Fasteners",
+    items: [
+      {
+        id: "numen_bumper_screw",
+        name: "M3 10mm Tapered Screw",
+        specification: "M3x10mm tapered/countersunk screw",
+        quantity: 1,
+        unit: "pcs",
+        sourcingLinks: [],
+        notes: "Attaches ring base to bumper.",
+        requiredWhen: (config) =>
+          config.communityMods.includes("4numen_jj100b_bumper") &&
+          config.scaleType === "gg_jj100b",
       },
     ],
   },
