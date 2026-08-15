@@ -11,6 +11,63 @@ export type ModCategory =
   | "build_options"
   | "accessories";
 
+/** Community buzz signals shown as emoji badges on mod cards. */
+export type ModSignal =
+  | "recommended"
+  | "popular"
+  | "rising"
+  | "problem_solver"
+  | "maintainer";
+
+export const MOD_SIGNAL_META: Record<
+  ModSignal,
+  { emoji: string; label: string; hint: string }
+> = {
+  recommended: {
+    emoji: "⭐",
+    label: "Recommended",
+    hint: "Frequently suggested by builders for this use case",
+  },
+  popular: {
+    emoji: "🔥",
+    label: "Popular",
+    hint: "Widely adopted in the community",
+  },
+  rising: {
+    emoji: "📈",
+    label: "Rising",
+    hint: "Getting a lot of recent community attention",
+  },
+  problem_solver: {
+    emoji: "🛠️",
+    label: "Fixes a common issue",
+    hint: "Targets a known pain point (jams, hang-ups, fitment)",
+  },
+  maintainer: {
+    emoji: "🧪",
+    label: "Maintainer pick",
+    hint: "From the upstream OpenTrickler maintainer",
+  },
+};
+
+const SIGNAL_SORT_ORDER: ModSignal[] = [
+  "recommended",
+  "popular",
+  "rising",
+  "problem_solver",
+  "maintainer",
+];
+
+export function modSignalRank(signals?: ModSignal[]): number {
+  if (!signals?.length) return SIGNAL_SORT_ORDER.length + 1;
+  return Math.min(
+    ...signals.map((s) => {
+      const idx = SIGNAL_SORT_ORDER.indexOf(s);
+      return idx === -1 ? SIGNAL_SORT_ORDER.length : idx;
+    }),
+  );
+}
+
 export const CATEGORY_META: Record<
   ModCategory,
   { label: string; hint: string }
@@ -41,6 +98,8 @@ export interface ModDefinition {
   docUrl?: string;
   impact: ModImpact;
   category: ModCategory;
+  /** Optional community buzz tags — keep sparse so badges stay meaningful. */
+  signals?: ModSignal[];
   exclusiveGroup?: string;
   requiresWhen?: (config: BuildConfig) => boolean;
   previewNote?: string;
@@ -69,6 +128,7 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     impact: "replaces",
     category: "scale_variant",
     exclusiveGroup: "ad_fx_shield_variant",
+    signals: ["popular", "recommended"],
     requiresWhen: (c) => isAdFx(c),
   },
   {
@@ -83,6 +143,7 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     impact: "replaces",
     category: "scale_variant",
     exclusiveGroup: "ad_fx_shield_variant",
+    signals: ["popular"],
     requiresWhen: (c) => isAdFx(c),
   },
   {
@@ -99,6 +160,7 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     impact: "replaces",
     category: "scale_variant",
     exclusiveGroup: "ad_fx_shield_variant",
+    signals: ["rising"],
     requiresWhen: (c) => isAdFx(c),
   },
   {
@@ -128,6 +190,7 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     impact: "replaces",
     category: "scale_variant",
     exclusiveGroup: "ad_fx_shield_variant",
+    signals: ["recommended"],
     requiresWhen: (c) => isAdFx(c),
   },
   {
@@ -140,6 +203,7 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     docUrl: `${UPSTREAM_BASE}/Dud3z`,
     impact: "additive",
     category: "powder_handling",
+    signals: ["problem_solver"],
     requiresWhen: (c) =>
       isAdFx(c) && c.communityMods.includes("memphis_v1_ad_shield"),
   },
@@ -155,6 +219,7 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     docUrl: `${UPSTREAM_BASE}/Dewey/Rear%20Reducer%20Mods`,
     impact: "additive",
     category: "powder_handling",
+    signals: ["recommended", "problem_solver"],
     requiresWhen: (c) => c.volumeReducer === true,
   },
   {
@@ -169,6 +234,7 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     docUrl: `${UPSTREAM_BASE}/ian99rt`,
     impact: "replaces",
     category: "powder_handling",
+    signals: ["problem_solver"],
     requiresWhen: (c) => isAdFx(c),
   },
   {
@@ -181,6 +247,7 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     docUrl: `${UPSTREAM_BASE}/HayaminiNL`,
     impact: "additive",
     category: "build_options",
+    signals: ["recommended"],
     requiresWhen: (c) => c.controllerVersion === "v2",
   },
   {
@@ -205,6 +272,7 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     docUrl: `${UPSTREAM_BASE}/eamars/neopixel_led_mod`,
     impact: "replaces",
     category: "build_options",
+    signals: ["maintainer"],
     requiresWhen: (c) => isAdFx(c),
   },
   {
@@ -218,6 +286,7 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     docUrl: `${UPSTREAM_BASE}/Dewey/Front%20Reducer%20Mods`,
     impact: "replaces",
     category: "build_options",
+    signals: ["popular"],
   },
   {
     id: "dewey_cup_holster",
@@ -229,6 +298,7 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     docUrl: `${UPSTREAM_BASE}/Dewey/A%26D%20Shield%20Mods`,
     impact: "replaces",
     category: "accessories",
+    signals: ["popular"],
     requiresWhen: (c) =>
       isAdFx(c) && !c.communityMods.includes("dewey_ad_shield"),
   },
@@ -243,6 +313,7 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     docUrl: `${UPSTREAM_BASE}/ian99rt`,
     impact: "replaces",
     category: "build_options",
+    signals: ["rising"],
     requiresWhen: (c) => c.servoGate === true,
   },
   {
@@ -279,6 +350,7 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     docUrl: `${UPSTREAM_BASE}/Dewey`,
     impact: "additive",
     category: "build_options",
+    signals: ["recommended", "problem_solver"],
   },
   {
     id: "1harrym_water_bottle_adapter",
@@ -300,6 +372,7 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     docUrl: `${UPSTREAM_BASE}/Golmeth`,
     impact: "replaces",
     category: "accessories",
+    signals: ["popular"],
   },
   {
     id: "4numen_phone_holder",
@@ -321,6 +394,7 @@ export const COMMUNITY_MODS: ModDefinition[] = [
     docUrl: `${UPSTREAM_BASE}/4numen`,
     impact: "additive",
     category: "build_options",
+    signals: ["recommended"],
     requiresWhen: (c) => c.scaleType === "gg_jj100b",
   },
 ];

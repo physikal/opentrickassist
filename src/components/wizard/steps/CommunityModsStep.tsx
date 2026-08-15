@@ -3,8 +3,11 @@ import { useAppStore } from "../../../store";
 import {
   COMMUNITY_MODS,
   CATEGORY_META,
+  MOD_SIGNAL_META,
+  modSignalRank,
   type ModDefinition,
   type ModCategory,
+  type ModSignal,
 } from "../../../data/community-mods";
 import type { MemphisV2Display } from "../../../types/config";
 import {
@@ -37,6 +40,14 @@ const DISPLAY_OPTIONS: {
   },
 ];
 
+const LEGEND_SIGNALS: ModSignal[] = [
+  "recommended",
+  "popular",
+  "rising",
+  "problem_solver",
+  "maintainer",
+];
+
 function ImpactBadge({ mod }: { mod: ModDefinition }) {
   if (mod.impact === "replaces") {
     return (
@@ -55,6 +66,26 @@ function ImpactBadge({ mod }: { mod: ModDefinition }) {
     );
   }
   return null;
+}
+
+function SignalBadges({ signals }: { signals: ModSignal[] }) {
+  return (
+    <span className="inline-flex flex-wrap items-center gap-1">
+      {signals.map((signal) => {
+        const meta = MOD_SIGNAL_META[signal];
+        return (
+          <span
+            key={signal}
+            title={meta.hint}
+            className="inline-flex items-center gap-1 rounded bg-gray-900/70 px-1.5 py-0.5 text-[10px] font-medium text-gray-200 ring-1 ring-gray-700"
+          >
+            <span aria-hidden="true">{meta.emoji}</span>
+            {meta.label}
+          </span>
+        );
+      })}
+    </span>
+  );
 }
 
 function ModCard({ mod }: { mod: ModDefinition }) {
@@ -100,6 +131,7 @@ function ModCard({ mod }: { mod: ModDefinition }) {
               >
                 {mod.name}
               </h4>
+              {mod.signals && <SignalBadges signals={mod.signals} />}
               <ImpactBadge mod={mod} />
             </div>
             <p className="mt-0.5 text-[10px] text-gray-500">
@@ -216,19 +248,45 @@ export function CommunityModsStep() {
   for (const mod of visibleMods) {
     byCategory.get(mod.category)?.push(mod);
   }
+  for (const [category, mods] of byCategory) {
+    byCategory.set(
+      category,
+      [...mods].sort(
+        (a, b) => modSignalRank(a.signals) - modSignalRank(b.signals),
+      ),
+    );
+  }
 
   return (
     <StepLayout
       title="Community Modifications"
       description="Optional modifications grouped by purpose. Select any that interest you — they'll be added to your print list."
     >
-      <div className="mb-4 flex items-start gap-2 rounded-lg border border-gray-700 bg-gray-800/50 px-3 py-2">
-        <Info className="mt-0.5 h-4 w-4 shrink-0 text-gray-400" />
-        <p className="text-xs text-gray-400">
-          Mods that don&rsquo;t apply to your current build are hidden.
-          Only one A&D FX Shield Variant can be active — picking a new
-          one replaces any other.
-        </p>
+      <div className="mb-4 space-y-2 rounded-lg border border-gray-700 bg-gray-800/50 px-3 py-2">
+        <div className="flex items-start gap-2">
+          <Info className="mt-0.5 h-4 w-4 shrink-0 text-gray-400" />
+          <p className="text-xs text-gray-400">
+            Mods that don&rsquo;t apply to your current build are hidden.
+            Only one A&D FX Shield Variant can be active — picking a new
+            one replaces any other. Emoji badges reflect community buzz
+            (not a ranking of print quality).
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-1.5 pl-6">
+          {LEGEND_SIGNALS.map((signal) => {
+            const meta = MOD_SIGNAL_META[signal];
+            return (
+              <span
+                key={signal}
+                title={meta.hint}
+                className="inline-flex items-center gap-1 rounded bg-gray-900/60 px-1.5 py-0.5 text-[10px] text-gray-300 ring-1 ring-gray-700"
+              >
+                <span aria-hidden="true">{meta.emoji}</span>
+                {meta.label}
+              </span>
+            );
+          })}
+        </div>
       </div>
 
       {CATEGORY_ORDER.map((category) => {
